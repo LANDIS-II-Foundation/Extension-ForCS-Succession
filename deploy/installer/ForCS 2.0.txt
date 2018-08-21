@@ -1,0 +1,9 @@
+LandisData   Extension
+
+Name         "ForC Succession"
+Version      2.0
+Type         succession
+Assembly     Landis.Extension.Succession.ForC-v2
+Class        Landis.Extension.Succession.ForC.PlugIn
+Description  "Forest Carbon Succession with cohorts"
+CoreVersion  7.0

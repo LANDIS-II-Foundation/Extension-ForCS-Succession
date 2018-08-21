@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <RootNamespace>Landis.Extension.Succession.ForC</RootNamespace>
-    <AssemblyName>Landis.Extension.Succession.ForC</AssemblyName>
+    <AssemblyName>Landis.Extension.Succession.ForC-v2</AssemblyName>
     <AssemblyTitle>Landis.Extension.Succession.ForC</AssemblyTitle>
     <AssemblyCompany>Landis-II-Foundation</AssemblyCompany>
     <AssemblyProduct>Landis.Extension.Succession.ForC</AssemblyProduct>
