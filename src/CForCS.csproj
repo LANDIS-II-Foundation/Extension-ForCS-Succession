@@ -1,139 +1,56 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{282565BB-9A00-4132-A489-EABDB8507F4D}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Landis.Biomass.Succession</RootNamespace>
+    <RootNamespace>Landis.Extension.Succession.ForC</RootNamespace>
     <AssemblyName>Landis.Extension.Succession.ForC</AssemblyName>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccProvider>
-    </SccProvider>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <OldToolsVersion>2.0</OldToolsVersion>
-    <TargetFrameworkProfile />
+    <AssemblyTitle>Landis.Extension.Succession.ForC</AssemblyTitle>
+    <AssemblyCompany>Landis-II-Foundation</AssemblyCompany>
+    <AssemblyProduct>Landis.Extension.Succession.ForC</AssemblyProduct>
+    <AssemblyCopyright>Landis-II-Foundation</AssemblyCopyright>
+    <AssemblyVersion>1.0</AssemblyVersion>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <RepositoryUrl>https://github.com/LANDIS-II-Foundation/Extension-ForCS-Succession</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseUrl>https://github.com/LANDIS-II-Foundation/Extension-ForCS-Succession/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>http://www.landis-ii.org</PackageProjectUrl>
+    <NeutralLanguage>English</NeutralLanguage>
+    <Authors>Landis-II-Foundation</Authors>
+    <Product>Landis.Extension.Succession.ForC</Product>
+    <Copyright>Landis-II-Foundation</Copyright>
+    <Version>1.0</Version>
+    <PackageTags>LANDIS-II;Landis;Extension;carbon</PackageTags>
+    <Description>Forest Carbon Succession Extension</Description>
+    <PackageReleaseNotes>.NET Standard 2.0 update</PackageReleaseNotes>
+    <FileVersion>7.0.0.0</FileVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="age-only-disturbances\DatasetParser.cs" />
-    <Compile Include="age-only-disturbances\Events.cs" />
-    <Compile Include="age-only-disturbances\IParameterDataset.cs" />
-    <Compile Include="age-only-disturbances\Module.cs" />
-    <Compile Include="age-only-disturbances\NoParameters.cs" />
-    <Compile Include="age-only-disturbances\ParameterDataset.cs" />
-    <Compile Include="age-only-disturbances\PercentageTable.cs" />
-    <Compile Include="age-only-disturbances\PoolPercentages.cs" />
-    <Compile Include="ANPP.cs" />
-    <Compile Include="BaseCohortsSiteVar.cs" />
-    <Compile Include="CohortBiomass.cs" />
-    <Compile Include="DisturbTransferFromPool.cs" />
-    <Compile Include="DOMPool.cs" />
-    <Compile Include="EcoregionData.cs" />
-    <Compile Include="FireEffects.cs" />
-    <Compile Include="IInputClimateParms.cs" />
-    <Compile Include="InitialBiomass.cs" />
-    <Compile Include="InputClimateParser.cs" />
-    <Compile Include="PlugIn.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Roots.cs" />
-    <Compile Include="SiteVars.cs" />
-    <Compile Include="Soil.cs" />
-    <Compile Include="SpeciesData.cs" />
-    <Compile Include="SufficientLight.cs" />
-    <Compile Include="TimeInput.cs" />
-    <Compile Include="utility\Ecoregions_AuxParm.cs" />
-    <Compile Include="utility\IInputParameters.cs" />
-    <Compile Include="utility\IInputSnagParms.cs" />
-    <Compile Include="utility\InputParameterParser.cs" />
-    <Compile Include="utility\InputParameters.cs" />
-    <Compile Include="utility\InputSnagParser.cs" />
-    <Compile Include="utility\MapNames.cs" />
-    <Compile Include="utility\Species_AuxParm.cs" />
-    <Compile Include="utility\UShortPixel.cs" />
-    <Compile Include="utility\Util.cs" />
+    <PackageReference Include="Landis.Core" Version="2.0.0" />
   </ItemGroup>
+
   <ItemGroup>
-    <Reference Include="Edu.Wisc.Forest.Flel.Util, Version=1.1.400.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files\LANDIS-II\v6\bin\6.1\Edu.Wisc.Forest.Flel.Util.dll</HintPath>
+    <Reference Include="Landis.Library.AgeOnlyCohorts-v3">
+      <HintPath>lib\Landis.Library.AgeOnlyCohorts-v3.dll</HintPath>
     </Reference>
-    <Reference Include="Landis.Core">
-      <HintPath>..\..\..\..\Program Files\LANDIS-II\v6\bin\6.2\Landis.Core.dll</HintPath>
+    <Reference Include="Landis.Library.Biomass-v2">
+      <HintPath>lib\Landis.Library.Biomass-v2.dll</HintPath>
     </Reference>
-    <Reference Include="Landis.Library.AgeOnlyCohorts">
-      <HintPath>..\..\..\..\Program Files\LANDIS-II\v6\bin\extensions\Landis.Library.AgeOnlyCohorts.dll</HintPath>
+    <Reference Include="Landis.Library.BiomassCohorts-v3">
+      <HintPath>lib\Landis.Library.BiomassCohorts-v3.dll</HintPath>
     </Reference>
-    <Reference Include="Landis.Library.BiomassCohorts-v2_FromJane">
-      <HintPath>..\Landis.Library.BiomassCohorts-v2_FromJane.dll</HintPath>
+    <Reference Include="Landis.Library.Cohorts-v2">
+      <HintPath>lib\Landis.Library.Cohorts-v2.dll</HintPath>
     </Reference>
-    <Reference Include="Landis.Library.Cohorts">
-      <HintPath>..\..\..\..\Program Files\LANDIS-II\v6\bin\extensions\Landis.Library.Cohorts.dll</HintPath>
+    <Reference Include="Landis.Library.Metadata-v2">
+      <HintPath>lib\Landis.Library.Metadata-v2.dll</HintPath>
     </Reference>
-    <Reference Include="Landis.Library.Succession-v5">
-      <HintPath>..\..\..\..\Program Files\LANDIS-II\v6\bin\extensions\Landis.Library.Succession-v5.dll</HintPath>
+    <Reference Include="Landis.Library.Parameters-v2">
+      <HintPath>lib\Landis.Library.Parameters-v2.dll</HintPath>
     </Reference>
-    <Reference Include="Landis.RasterIO.Gdal">
-      <HintPath>..\..\..\..\Program Files\LANDIS-II\v6\bin\6.2\Landis.RasterIO.Gdal.dll</HintPath>
-    </Reference>
-    <Reference Include="Landis.SpatialModeling, Version=0.82.4216.20794, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files\LANDIS-II\v6\bin\6.1\Landis.SpatialModeling.dll</HintPath>
-    </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\..\..\..\Program Files\LANDIS-II\v6\bin\6.2\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Troschuetz.Random, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files\LANDIS-II\v6\bin\6.1\Troschuetz.Random.dll</HintPath>
+    <Reference Include="Landis.Library.Succession-v6">
+      <HintPath>lib\Landis.Library.Succession-v6.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="project-info.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
-  <PropertyGroup>
-    <PostBuildEvent>copy $(TargetName).* "C:\Program Files\LANDIS-II\v6\bin\extensions"</PostBuildEvent>
-  </PropertyGroup>
+  
 </Project>

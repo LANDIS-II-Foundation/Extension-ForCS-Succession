@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Landis.Utilities;
 
 namespace Landis.Extension.Succession.ForC
 {
@@ -55,7 +56,7 @@ namespace Landis.Extension.Succession.ForC
             // Set the member data through the property, so error/range checking code doesn't have to be duplicated.
             this.ID = nID;
             if ((dPropToAir + dPropToFloor + dPropToFPS + dPropToDOM) > 1.0)
-                throw new Edu.Wisc.Forest.Flel.Util.InputValueException("Proportions", "Sum of all proportions must be no greater than 1.0.  The total of the proportions is = {0}.", dPropToAir + dPropToFloor + dPropToFPS + dPropToDOM);
+                throw new Landis.Utilities.InputValueException("Proportions", "Sum of all proportions must be no greater than 1.0.  The total of the proportions is = {0}.", dPropToAir + dPropToFloor + dPropToFPS + dPropToDOM);
             this.PropToAir = dPropToAir;
             this.PropToFloor = dPropToFloor;
             this.PropToFPS = dPropToFPS;
@@ -68,7 +69,7 @@ namespace Landis.Extension.Succession.ForC
             this.ID = nID;
             this.Name = sName;
             if ((dPropToAir + dPropToFloor + dPropToFPS + dPropToDOM) > 1.0)
-                throw new Edu.Wisc.Forest.Flel.Util.InputValueException("Proportions", "Sum of all proportions must be no greater than 1.0.  The total of the proportions is = {0}.", dPropToAir + dPropToFloor + dPropToFPS + dPropToDOM);
+                throw new Landis.Utilities.InputValueException("Proportions", "Sum of all proportions must be no greater than 1.0.  The total of the proportions is = {0}.", dPropToAir + dPropToFloor + dPropToFPS + dPropToDOM);
             this.PropToAir = dPropToAir;
             this.PropToFloor = dPropToFloor;
             this.PropToFPS = dPropToFPS;
@@ -84,7 +85,7 @@ namespace Landis.Extension.Succession.ForC
             set
             {
                 if (value <= 0)
-                    throw new Edu.Wisc.Forest.Flel.Util.InputValueException(value.ToString(), "ID must be greater than 0.  The value provided is = {0}.", value);
+                    throw new Landis.Utilities.InputValueException(value.ToString(), "ID must be greater than 0.  The value provided is = {0}.", value);
                 m_nID = value;
             }
         }
@@ -98,7 +99,7 @@ namespace Landis.Extension.Succession.ForC
             set
             {
                 if (string.IsNullOrEmpty(value))
-                    throw new Edu.Wisc.Forest.Flel.Util.InputValueException(value.ToString(), "A Name must be provided.");
+                    throw new Landis.Utilities.InputValueException(value.ToString(), "A Name must be provided.");
                 m_sName = value;
             }
         }
@@ -112,7 +113,7 @@ namespace Landis.Extension.Succession.ForC
             set
             {
                 if ((value < 0.0) || (value > 1.0))
-                    throw new Edu.Wisc.Forest.Flel.Util.InputValueException(value.ToString(), "Proportion to Air must be in the range [0.0, 1.0].");
+                    throw new Landis.Utilities.InputValueException(value.ToString(), "Proportion to Air must be in the range [0.0, 1.0].");
                 m_dPropToAir = value;
             }
         }
@@ -126,7 +127,7 @@ namespace Landis.Extension.Succession.ForC
             set
             {
                 if ((value < 0.0) || (value > 1.0))
-                    throw new Edu.Wisc.Forest.Flel.Util.InputValueException(value.ToString(), "Proportion to Floor must be in the range [0.0, 1.0].");
+                    throw new InputValueException(value.ToString(), "Proportion to Floor must be in the range [0.0, 1.0].");
                 m_dPropToFloor = value;
             }
         }
@@ -140,7 +141,7 @@ namespace Landis.Extension.Succession.ForC
             set
             {
                 if ((value < 0.0) || (value > 1.0))
-                    throw new Edu.Wisc.Forest.Flel.Util.InputValueException(value.ToString(), "Proportion to FPS must be in the range [0.0, 1.0].");
+                    throw new InputValueException(value.ToString(), "Proportion to FPS must be in the range [0.0, 1.0].");
                 m_dPropToFPS = value;
             }
         }
@@ -154,7 +155,7 @@ namespace Landis.Extension.Succession.ForC
             set
             {
                 if ((value < 0.0) || (value > 1.0))
-                    throw new Edu.Wisc.Forest.Flel.Util.InputValueException(value.ToString(), "Proportion to DOM must be in the range [0.0, 1.0].");
+                    throw new Landis.Utilities.InputValueException(value.ToString(), "Proportion to DOM must be in the range [0.0, 1.0].");
                 m_dPropToDOM = value;
             }
         }
@@ -200,7 +201,7 @@ namespace Landis.Extension.Succession.ForC
         {
             //if ((nPoolID < (int)eDOMPoolIDs.VeryFastAG) || (nPoolID > (int)eDOMPoolIDs.BlackCarbon))
             if (!m_dict.ContainsKey(nPoolID))
-                throw new Edu.Wisc.Forest.Flel.Util.InputValueException(nPoolID.ToString(), "Pool ID cannot be found.  Has Initialize*() been called?");
+                throw new Landis.Utilities.InputValueException(nPoolID.ToString(), "Pool ID cannot be found.  Has Initialize*() been called?");
             return m_dict[nPoolID];
         }
     }

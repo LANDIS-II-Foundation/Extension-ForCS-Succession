@@ -1,9 +1,9 @@
-//  Copyright 2005-2010 Portland State University, University of Wisconsin
-//  Authors:  Robert M. Scheller, James B. Domingo
+//  Authors:  Caren Dymond, Sarah Beukema
 
 using Landis.SpatialModeling;
 using Landis.Core;
-using Edu.Wisc.Forest.Flel.Util;
+using Landis.Utilities;
+using Landis.Library.Parameters;
 
 namespace Landis.Extension.Succession.ForC
 {
@@ -11,14 +11,14 @@ namespace Landis.Extension.Succession.ForC
     {
 
         //user-defined by ecoregion
-        public static Ecoregions.AuxParm<double> FieldCapacity;
-        public static Ecoregions.AuxParm<double> Latitude;
+        public static Landis.Library.Parameters.Ecoregions.AuxParm<double> FieldCapacity;
+        public static Landis.Library.Parameters.Ecoregions.AuxParm<double> Latitude;
 
-        public static Ecoregions.AuxParm<double> AET;
+        public static Landis.Library.Parameters.Ecoregions.AuxParm<double> AET;
         
-        public static Ecoregions.AuxParm<double> ActiveSiteCount;
-        public static Ecoregions.AuxParm<Percentage>[] ShadeBiomass;
-        public static Ecoregions.AuxParm<int> B_MAX;  // used for shade calculations; derived below.
+        public static Landis.Library.Parameters.Ecoregions.AuxParm<double> ActiveSiteCount;
+        public static Landis.Library.Parameters.Ecoregions.AuxParm<Percentage>[] ShadeBiomass;
+        public static Landis.Library.Parameters.Ecoregions.AuxParm<int> B_MAX;  // used for shade calculations; derived below.
 
         /*  CODE RELATED TO THE USE OF ONE OF THE BIGGER LANDIS CLIMATE LIBRARIES
         // AnnualClimateArray contains climates for N years whereby N is the succession time step.
@@ -31,7 +31,7 @@ namespace Landis.Extension.Succession.ForC
         */
         //New ForCs Climate (April 2018)
         private static IInputClimateParms m_iCParams;
-        public static Ecoregions.AuxParm<double> AnnualTemperature;
+        public static Landis.Library.Parameters.Ecoregions.AuxParm<double> AnnualTemperature;
         private static bool bWroteMsg1;
 
         //---------------------------------------------------------------------
@@ -44,9 +44,9 @@ namespace Landis.Extension.Succession.ForC
             FieldCapacity = parameters.FieldCapacity;
             Latitude = parameters.Latitude;
     
-            ActiveSiteCount = new Ecoregions.AuxParm<double>(PlugIn.ModelCore.Ecoregions);
+            ActiveSiteCount = new Landis.Library.Parameters.Ecoregions.AuxParm<double>(PlugIn.ModelCore.Ecoregions);
             //ClimateUpdates  = new Ecoregions.AuxParm<bool[]>(PlugIn.ModelCore.Ecoregions);    //LANDIS CLIMATE LIBRARIES
-            AET             = new Ecoregions.AuxParm<double>(PlugIn.ModelCore.Ecoregions);
+            AET             = new Landis.Library.Parameters.Ecoregions.AuxParm<double>(PlugIn.ModelCore.Ecoregions);
             
             foreach (ActiveSite site in PlugIn.ModelCore.Landscape)
             {
@@ -55,7 +55,7 @@ namespace Landis.Extension.Succession.ForC
                 ActiveSiteCount[ecoregion]++;
             }
             //NEW ForCS specific Climate
-            AnnualTemperature = new Ecoregions.AuxParm<double>(PlugIn.ModelCore.Ecoregions);
+            AnnualTemperature = new Landis.Library.Parameters.Ecoregions.AuxParm<double>(PlugIn.ModelCore.Ecoregions);
             GetAnnualTemperature(parameters.Timestep, 0);
 
             /*  CODE RELATED TO THE USE OF ONE OF THE BIGGER LANDIS CLIMATE LIBRARIES
@@ -85,7 +85,7 @@ namespace Landis.Extension.Succession.ForC
         //---------------------------------------------------------------------
         public static void UpdateB_MAX()
         {
-            B_MAX  = new Ecoregions.AuxParm<int>(PlugIn.ModelCore.Ecoregions);
+            B_MAX  = new Landis.Library.Parameters.Ecoregions.AuxParm<int>(PlugIn.ModelCore.Ecoregions);
             
             //  Fill in B_MAX array
             foreach (IEcoregion ecoregion in PlugIn.ModelCore.Ecoregions) 
@@ -115,12 +115,12 @@ namespace Landis.Extension.Succession.ForC
             
             if(actualYear == 0 || actualYear != AnnualWeather[ecoregion].Year)
             {
-                //PlugIn.ModelCore.Log.WriteLine("  SETTING ANNAUL CLIMATE:  Yr={0}, SimYr={1}, Eco={2}.", year, actualYear, ecoregion.Name);
+                //PlugIn.ModelCore.UI.WriteLine("  SETTING ANNAUL CLIMATE:  Yr={0}, SimYr={1}, Eco={2}.", year, actualYear, ecoregion.Name);
                 AnnualWeather[ecoregion] = AnnualClimateArray[ecoregion][year];
                 AET[ecoregion] = AnnualClimate_Monthly.CalculateAnnualActualEvapotranspiration(AnnualWeather[ecoregion], FieldCapacity[ecoregion]); //Climate Library v2.0
                 //AET[ecoregion] = AnnualClimate.CalculateAnnualActualEvapotranspiration(AnnualWeather[ecoregion], FieldCapacity[ecoregion]);  //Climate Library on GitHub
                 //string weatherWrite = AnnualWeather[ecoregion].Write();
-                //PlugIn.ModelCore.Log.WriteLine("{0}", weatherWrite);
+                //PlugIn.ModelCore.UI.WriteLine("{0}", weatherWrite);
             }
         }
 
@@ -132,7 +132,7 @@ namespace Landis.Extension.Succession.ForC
         public static void GenerateNewClimate(int year, int years)
         {
         
-            //PlugIn.ModelCore.Log.WriteLine("   Generating new climate for simulation year {0}.", year);
+            //PlugIn.ModelCore.UI.WriteLine("   Generating new climate for simulation year {0}.", year);
 
             AnnualClimateArray = new Ecoregions.AuxParm<AnnualClimate_Monthly[]>(PlugIn.ModelCore.Ecoregions); //Climate Library v2.0
             //AnnualClimateArray = new Ecoregions.AuxParm<AnnualClimate[]>(PlugIn.ModelCore.Ecoregions);   //Climate Library on GitHub
@@ -161,9 +161,9 @@ namespace Landis.Extension.Succession.ForC
                         //if (Climate.AllData.ContainsKey(actualYear)) //Climate Library on GitHub
                         {
                             //Climate.TimestepData = Climate.Future_AllData[actualYear];
-                            //PlugIn.ModelCore.Log.WriteLine("  Changing TimestepData:  Yr={0}, Eco={1}.", actualYear, ecoregion.Name);
-                            //PlugIn.ModelCore.Log.WriteLine("  Changing TimestepData:  AllData  Jan Ppt = {0:0.00}.", Climate.AllData[actualYear][ecoregion.Index,0].AvgPpt);
-                            //PlugIn.ModelCore.Log.WriteLine("  Changing TimestepData:  Timestep Jan Ppt = {0:0.00}.", Climate.TimestepData[ecoregion.Index,0].AvgPpt);
+                            //PlugIn.ModelCore.UI.WriteLine("  Changing TimestepData:  Yr={0}, Eco={1}.", actualYear, ecoregion.Name);
+                            //PlugIn.ModelCore.UI.WriteLine("  Changing TimestepData:  AllData  Jan Ppt = {0:0.00}.", Climate.AllData[actualYear][ecoregion.Index,0].AvgPpt);
+                            //PlugIn.ModelCore.UI.WriteLine("  Changing TimestepData:  Timestep Jan Ppt = {0:0.00}.", Climate.TimestepData[ecoregion.Index,0].AvgPpt);
                         }
 
                         tempClimate[y] = new AnnualClimate_Monthly(ecoregion, Latitude[ecoregion], Climate.Phase.Future_Climate, actualYear, actualYear);  //Climate Library v2.0
@@ -202,7 +202,7 @@ namespace Landis.Extension.Succession.ForC
                             {
                                 if (!bWroteMsg1)
                                 {
-                                    PlugIn.ModelCore.Log.WriteLine("ANPP values were not entered for the earliest spin-up years. Year 0 values will be used.");
+                                    PlugIn.ModelCore.UI.WriteLine("ANPP values were not entered for the earliest spin-up years. Year 0 values will be used.");
                                     bWroteMsg1 = true;
                                 }
                                 AnnualTemperature[ecoregion] = climatetemperature.ClimateAnnualTemp;

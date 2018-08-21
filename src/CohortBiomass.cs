@@ -1,11 +1,10 @@
-//  Copyright 2005-2010 Portland State University, University of Wisconsin
-//  Authors:  Robert M. Scheller, James B. Domingo
+//  Authors:  Caren Dymond, Sarah Beukema
 
 using Landis.SpatialModeling;
 using Landis.Core;
 using Landis.Library.BiomassCohorts;
 using System.Collections.Generic;
-using Edu.Wisc.Forest.Flel.Util;
+using Landis.Utilities;
 using System;
 
 namespace Landis.Extension.Succession.ForC
@@ -131,13 +130,13 @@ namespace Landis.Extension.Succession.ForC
 
             //if (site.Location.Row == 279 && site.Location.Column == 64 && cohort.Species.Name == "Pl")
             //{
-            //    PlugIn.ModelCore.Log.WriteLine("Yr={0},  Age={1}, mortGrow={2}, mortAge={3}, ANPP={4}, totLitter={5}", PlugIn.ModelCore.CurrentTime, cohort.Age, mortalityGrowth, mortalityAge, actualANPP, totalLitter);
+            //    PlugIn.ModelCore.UI.WriteLine("Yr={0},  Age={1}, mortGrow={2}, mortAge={3}, ANPP={4}, totLitter={5}", PlugIn.ModelCore.CurrentTime, cohort.Age, mortalityGrowth, mortalityAge, actualANPP, totalLitter);
            // }
 
 
-            //PlugIn.ModelCore.Log.WriteLine("Age={0}, ANPPact={1:0.0}, M={2:0.0}, litter={3:0.00}.", cohort.Age, actualANPP, totalMortality, totalLitter);
-            //PlugIn.ModelCore.Log.WriteLine("Name={0}, Age={1}, B={2}, ANPPact={3:0.0}, delta={4:0.0}", cohort.Species.Name, cohort.Age, cohort.Biomass, actualANPP, deltaBiomass);
-            //PlugIn.ModelCore.Log.WriteLine("Name={0}, Age={1}, B={2}, Mage={3:0.0}, Mgrowth={4:0.0}, ANPPact={5:0.0}, delta={6:0.0}", cohort.Species.Name, cohort.Age, cohort.Biomass, mortalityAge, mortalityGrowth, actualANPP, deltaBiomass);
+            //PlugIn.ModelCore.UI.WriteLine("Age={0}, ANPPact={1:0.0}, M={2:0.0}, litter={3:0.00}.", cohort.Age, actualANPP, totalMortality, totalLitter);
+            //PlugIn.ModelCore.UI.WriteLine("Name={0}, Age={1}, B={2}, ANPPact={3:0.0}, delta={4:0.0}", cohort.Species.Name, cohort.Age, cohort.Biomass, actualANPP, deltaBiomass);
+            //PlugIn.ModelCore.UI.WriteLine("Name={0}, Age={1}, B={2}, Mage={3:0.0}, Mgrowth={4:0.0}, ANPPact={5:0.0}, delta={6:0.0}", cohort.Species.Name, cohort.Age, cohort.Biomass, mortalityAge, mortalityGrowth, actualANPP, deltaBiomass);
 
             //The KillNow flag indicates that this is the year of growth in which to kill off some cohorts in order to make snags.
             if (SiteVars.soilClass[site].bKillNow && Snags.bSnagsPresent)
@@ -193,7 +192,7 @@ namespace Landis.Extension.Succession.ForC
             {
                 M_AGE += cohort.Biomass * SpinupMortalityFraction;
                 if (PlugIn.CalibrateMode)
-                    PlugIn.ModelCore.Log.WriteLine("Yr={0}. SpinupMortalityFraction={1:0.0000}, AdditionalMortality={2:0.0}, Spp={3}, Age={4}.", (PlugIn.ModelCore.CurrentTime + SubYear), SpinupMortalityFraction, (cohort.Biomass * SpinupMortalityFraction), cohort.Species.Name, cohort.Age);
+                    PlugIn.ModelCore.UI.WriteLine("Yr={0}. SpinupMortalityFraction={1:0.0000}, AdditionalMortality={2:0.0}, Spp={3}, Age={4}.", (PlugIn.ModelCore.CurrentTime + SubYear), SpinupMortalityFraction, (cohort.Biomass * SpinupMortalityFraction), cohort.Species.Name, cohort.Age);
             }
 
             return M_AGE;
@@ -217,7 +216,7 @@ namespace Landis.Extension.Succession.ForC
             {
                 capacityReduction = 1.0 - SiteVars.CapacityReduction[site];
                 if (PlugIn.CalibrateMode)
-                    PlugIn.ModelCore.Log.WriteLine("Yr={0}. Capacity Remaining={1:0.00}, Spp={2}, Age={3} B={4}.", (PlugIn.ModelCore.CurrentTime + SubYear), capacityReduction, cohort.Species.Name, cohort.Age, cohort.Biomass);
+                    PlugIn.ModelCore.UI.WriteLine("Yr={0}. Capacity Remaining={1:0.00}, Spp={2}, Age={3} B={4}.", (PlugIn.ModelCore.CurrentTime + SubYear), capacityReduction, cohort.Species.Name, cohort.Age, cohort.Biomass);
             }
 
             //double indexC = CalculateCompetition(site, cohort);
@@ -258,7 +257,7 @@ namespace Landis.Extension.Succession.ForC
 
             //if (site.Location.Row == 279 && site.Location.Column == 64 && cohort.Species.Name == "Pl")
             //{
-            //    PlugIn.ModelCore.Log.WriteLine("Yr={0},  Age={1}, PotBio={2}, CohortBio={3}, maxBio={4}, siteBio={5}, ANPP={6}.", PlugIn.ModelCore.CurrentTime, cohort.Age, potentialBiomass, cohort.Biomass, maxBiomass, siteBiomass, actualANPP);
+            //    PlugIn.ModelCore.UI.WriteLine("Yr={0},  Age={1}, PotBio={2}, CohortBio={3}, maxBio={4}, siteBio={5}, ANPP={6}.", PlugIn.ModelCore.CurrentTime, cohort.Age, potentialBiomass, cohort.Biomass, maxBiomass, siteBiomass, actualANPP);
             //}
             
             return actualANPP;
@@ -381,7 +380,7 @@ namespace Landis.Extension.Succession.ForC
                         strCombo += " to: " + Roots.CoarseRoot;
                         string strCombo2 = "from: " + preMortFine;
                         strCombo2 += " to: " + Roots.FineRoot;
-                        PlugIn.ModelCore.Log.WriteLine("Root Dynamics: Overall root biomass declined but note change in coarse root allocation " + strCombo + " and fine root allocation" + strCombo2);
+                        PlugIn.ModelCore.UI.WriteLine("Root Dynamics: Overall root biomass declined but note change in coarse root allocation " + strCombo + " and fine root allocation" + strCombo2);
                     }
                 }
                 else if (PlugIn.ModelCore.CurrentTime > 0)
@@ -391,7 +390,7 @@ namespace Landis.Extension.Succession.ForC
                     strCombo += " to: " + cohortBiomass;
                     string strCombo2 = "from: " + preMortRoots;
                     strCombo2 += " to: " + TotRoots;
-                    PlugIn.ModelCore.Log.WriteLine("Root Dynamics: Note that aboveground biomass decreased " + strCombo + " but root biomass increased " + strCombo2);
+                    PlugIn.ModelCore.UI.WriteLine("Root Dynamics: Note that aboveground biomass decreased " + strCombo + " but root biomass increased " + strCombo2);
                 }
             }
 

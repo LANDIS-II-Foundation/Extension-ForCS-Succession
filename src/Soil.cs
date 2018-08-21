@@ -1,11 +1,10 @@
-//  Copyright 2005-2010 Portland State University, University of Wisconsin
-//  Authors:  Robert M. Scheller, James B. Domingo
+//  Authors:  Caren Dymond, Sarah Beukema
 
 using Landis.SpatialModeling;
 using Landis.Core;
 using Landis.Library.BiomassCohorts;
 using System.Collections.Generic;
-using Edu.Wisc.Forest.Flel.Util;
+using Landis.Utilities;
 using System.IO;
 using System;
 
@@ -251,7 +250,7 @@ namespace Landis.Extension.Succession.ForC
 
             double MeanAnnualTemperature = EcoregionData.AnnualTemperature[ecoregion];
             double AnnualPrecipitation = 1.0;           // not actually used
-            //PlugIn.ModelCore.Log.WriteLine("year={0}, eco={1}, temp={2}", year, ecoregion, MeanAnnualTemperature);
+            //PlugIn.ModelCore.UI.WriteLine("year={0}, eco={1}, temp={2}", year, ecoregion, MeanAnnualTemperature);
 
             /* First we assign precipitation and temperature effects to the decay rates.  The very fast, fast, medium, and
              * slow pools are all influenced by these effects.  Note that decay rates can vary by species now */
@@ -601,7 +600,7 @@ namespace Landis.Extension.Succession.ForC
         public void CollectBiomassMortality(ISpecies species, int age, double mortality_wood, double mortality_nonwood, int AboveBelow)
         {
             int idxSpecies = species.Index;
-            int idxDist = 0;        //because no disturbances here
+            //int idxDist = 0;        //because no disturbances here
 
             if (!SpeciesPresent[idxSpecies])
                 SpeciesPresent[idxSpecies] = true;
@@ -824,7 +823,7 @@ namespace Landis.Extension.Succession.ForC
                     if (severity == 0)
                         SiteVars.FireSeverity = PlugIn.ModelCore.GetSiteVar<byte>("Fire.Severity");
 
-                    PlugIn.ModelCore.Log.WriteLine("Yr={0}.    site={1}, severity={2}.", (PlugIn.ModelCore.CurrentTime), site.Location, severity);
+                    PlugIn.ModelCore.UI.WriteLine("Yr={0}.    site={1}, severity={2}.", (PlugIn.ModelCore.CurrentTime), site.Location, severity);
 
                     if (severity == 0)
                         return;     //no impacts from a fire severity = 0
@@ -853,7 +852,7 @@ namespace Landis.Extension.Succession.ForC
 
             //Now that we have the information, let's actually do the transfers.
 
-            bool bPrintFlux;
+            bool bPrintFlux = false;
 
             //set up the printing flags
             bPrintFlux = false;
@@ -1209,13 +1208,13 @@ namespace Landis.Extension.Succession.ForC
             string logFileName = "log_Pools.csv";
             try
             {
-                logPools = PlugIn.ModelCore.CreateTextFile(logFileName);
+                logPools = Landis.Data.CreateTextFile(logFileName);
             }
             catch (Exception err)
             {
-                return;
-                //string mesg = string.Format("{0}", err.Message);
-                //throw new System.ApplicationException(mesg);
+                //return;
+                string mesg = string.Format("{0}", err.Message);
+                throw new System.ApplicationException(mesg);
             }
 
             logPools.AutoFlush = true;
@@ -1223,33 +1222,39 @@ namespace Landis.Extension.Succession.ForC
             logFileName = "log_Flux.csv";
             try
             {
-                logFlux = PlugIn.ModelCore.CreateTextFile(logFileName);
+                logFlux = Landis.Data.CreateTextFile(logFileName);
             }
             catch (Exception err)
             {
-                return;
+                //return;
+                string mesg = string.Format("{0}", err.Message);
+                throw new System.ApplicationException(mesg);
             }
             logFlux.AutoFlush = true;
 
             logFileName = "log_FluxDOM.csv";
             try
             {
-                logFluxDist = PlugIn.ModelCore.CreateTextFile(logFileName);
+                logFluxDist = Landis.Data.CreateTextFile(logFileName);
             }
             catch (Exception err)
             {
-                return;
+                //return;
+                string mesg = string.Format("{0}", err.Message);
+                throw new System.ApplicationException(mesg);
             }
             logFluxDist.AutoFlush = true;
 
             logFileName = "log_FluxBio.csv";
             try
             {
-                logFluxBio = PlugIn.ModelCore.CreateTextFile(logFileName);
+                logFluxBio = Landis.Data.CreateTextFile(logFileName);
             }
             catch (Exception err)
             {
-                return;
+                string mesg = string.Format("{0}", err.Message);
+                throw new System.ApplicationException(mesg);
+                //return;
             }
             logFluxBio.AutoFlush = true;
 
@@ -1257,22 +1262,26 @@ namespace Landis.Extension.Succession.ForC
             logFileName = "log_BiomassC.csv";
             try
             {
-                logBioPools = PlugIn.ModelCore.CreateTextFile(logFileName);
+                logBioPools = Landis.Data.CreateTextFile(logFileName);
             }
             catch (Exception err)
             {
-                return;
+                string mesg = string.Format("{0}", err.Message);
+                throw new System.ApplicationException(mesg);
+                //return;
             }
             logBioPools.AutoFlush = true;
 
             logFileName = "log_Summary.csv";
             try
             {
-                logFluxSum = PlugIn.ModelCore.CreateTextFile(logFileName);
+                logFluxSum = Landis.Data.CreateTextFile(logFileName);
             }
             catch (Exception err)
             {
-                return;
+                string mesg = string.Format("{0}", err.Message);
+                throw new System.ApplicationException(mesg);
+               //return;
             }
             logFluxSum.AutoFlush = true;
 
@@ -1510,7 +1519,7 @@ namespace Landis.Extension.Succession.ForC
                 icnt++;
             } while (icnt < SoilVars.iParams.SpinUpIterations && (prop > SoilVars.iParams.SpinUpTolerance || prop < -SoilVars.iParams.SpinUpTolerance));
             //if (icnt >= 20 && (prop > .01 || prop < -.01))
-            //    PlugIn.ModelCore.Log.WriteLine("count exceeded without slow pools converging");
+            //    PlugIn.ModelCore.UI.WriteLine("count exceeded without slow pools converging");
             return;
         }
 

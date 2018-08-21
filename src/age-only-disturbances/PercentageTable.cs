@@ -40,7 +40,7 @@ namespace Landis.Extension.Succession.ForC.AgeOnlyDisturbances
         {
             get {
                 PoolPercentages poolPercentages;
-                //PlugIn.ModelCore.Log.WriteLine("   Trying to acquire pool percentages for {0}.", disturbanceType);
+                //PlugIn.ModelCore.UI.WriteLine("   Trying to acquire pool percentages for {0}.", disturbanceType);
                 if (percentages.TryGetValue(disturbanceType, out poolPercentages))
                     return poolPercentages;
 

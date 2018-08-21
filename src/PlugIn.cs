@@ -1,5 +1,4 @@
-//  Copyright 2005-2010 Portland State University, University of Wisconsin
-//  Authors:  Robert M. Scheller
+//  Authors:  Caren Dymond, Sarah Beukema
 
 using Landis.Core;
 using Landis.SpatialModeling;
@@ -7,7 +6,7 @@ using Landis.Library.Succession;
 using Landis.Library.InitialCommunities;
 using Landis.Library.BiomassCohorts;
 using System.Collections.Generic;
-using Edu.Wisc.Forest.Flel.Util;
+using Landis.Utilities;
 using System.Diagnostics;       //temporary - for memory testing SEPT
 
 namespace Landis.Extension.Succession.ForC
@@ -186,7 +185,7 @@ namespace Landis.Extension.Succession.ForC
                                DeathEventArgs eventArgs)
         {
 
-            //PlugIn.ModelCore.Log.WriteLine("Cohort Died! :-(");
+            //PlugIn.ModelCore.UI.WriteLine("Cohort Died! :-(");
 
             ExtensionType disturbanceType = eventArgs.DisturbanceType;
             ActiveSite site = eventArgs.Site;
@@ -197,10 +196,10 @@ namespace Landis.Extension.Succession.ForC
             double foliar = (double) cohort.ComputeNonWoodyBiomass(site);
             double wood = ((double) cohort.Biomass - foliar);
 
-            //PlugIn.ModelCore.Log.WriteLine("Cohort Died: species={0}, age={1}, biomass={2}, foliage={3}.", cohort.Species.Name, cohort.Age, cohort.Biomass, foliar);
+            //PlugIn.ModelCore.UI.WriteLine("Cohort Died: species={0}, age={1}, biomass={2}, foliage={3}.", cohort.Species.Name, cohort.Age, cohort.Biomass, foliar);
             
             if (disturbanceType == null) {
-                //PlugIn.ModelCore.Log.WriteLine("NO EVENT: Cohort Died: species={0}, age={1}, disturbance={2}.", cohort.Species.Name, cohort.Age, eventArgs.DisturbanceType);
+                //PlugIn.ModelCore.UI.WriteLine("NO EVENT: Cohort Died: species={0}, age={1}, disturbance={2}.", cohort.Species.Name, cohort.Age, eventArgs.DisturbanceType);
 
                 double totalRoot = Roots.CalculateRootBiomass(site, species, cohort.Biomass);
                 
@@ -209,7 +208,7 @@ namespace Landis.Extension.Succession.ForC
             }
             
             if (disturbanceType != null) {
-                //PlugIn.ModelCore.Log.WriteLine("DISTURBANCE EVENT: Cohort Died: species={0}, age={1}, disturbance={2}.", cohort.Species.Name, cohort.Age, eventArgs.DisturbanceType);
+                //PlugIn.ModelCore.UI.WriteLine("DISTURBANCE EVENT: Cohort Died: species={0}, age={1}, disturbance={2}.", cohort.Species.Name, cohort.Age, eventArgs.DisturbanceType);
             
                 Disturbed[site] = true;
                 if (disturbanceType.IsMemberOf("disturbance:fire"))
@@ -298,7 +297,7 @@ namespace Landis.Extension.Succession.ForC
                                            ActiveSite site)
         {
             
-            //PlugIn.ModelCore.Log.WriteLine("  Calculating Sufficient Light from Succession.");
+            //PlugIn.ModelCore.UI.WriteLine("  Calculating Sufficient Light from Succession.");
             byte siteShade = PlugIn.ModelCore.GetSiteVar<byte>("Shade")[site];
             
             double lightProbability = 0.0;
@@ -307,7 +306,7 @@ namespace Landis.Extension.Succession.ForC
             foreach(ISufficientLight lights in sufficientLight)
             {
             
-                //PlugIn.ModelCore.Log.WriteLine("Sufficient Light:  ShadeClass={0}, Prob0={1}.", lights.ShadeClass, lights.ProbabilityLight0);
+                //PlugIn.ModelCore.UI.WriteLine("Sufficient Light:  ShadeClass={0}, Prob0={1}.", lights.ShadeClass, lights.ProbabilityLight0);
                 if (lights.ShadeClass == species.ShadeTolerance)
                 {
                     if (siteShade == 0)  lightProbability = lights.ProbabilityLight0;
@@ -321,7 +320,7 @@ namespace Landis.Extension.Succession.ForC
             }
             
             if(!found)
-                PlugIn.ModelCore.Log.WriteLine("A Sufficient Light value was not found for {0}.", species.Name);
+                PlugIn.ModelCore.UI.WriteLine("A Sufficient Light value was not found for {0}.", species.Name);
 
             return PlugIn.ModelCore.GenerateUniform() < lightProbability;
             
@@ -357,14 +356,14 @@ namespace Landis.Extension.Succession.ForC
                     string mesg = string.Format("Minimum relative biomass has not been defined for ecoregion {0}", ecoregion.Name);
                     throw new System.ApplicationException(mesg);
                 }
-                //PlugIn.ModelCore.Log.WriteLine("Shade Calculation:  lastMort={0:0.0}, B_MAX={1}, oldB={2}, B_ACT={3}, shade={4}.", lastMortality, B_MAX,oldBiomass,B_ACT,shade);
+                //PlugIn.ModelCore.UI.WriteLine("Shade Calculation:  lastMort={0:0.0}, B_MAX={1}, oldB={2}, B_ACT={3}, shade={4}.", lastMortality, B_MAX,oldBiomass,B_ACT,shade);
                 if (B_AM >= EcoregionData.ShadeBiomass[shade][ecoregion])
                 {
                     return shade;
                 }
             }
             
-            //PlugIn.ModelCore.Log.WriteLine("Shade Calculation:  lastMort={0:0.0}, B_MAX={1}, oldB={2}, B_ACT={3}, shade=0.", lastMortality, B_MAX,oldBiomass,B_ACT);
+            //PlugIn.ModelCore.UI.WriteLine("Shade Calculation:  lastMort={0:0.0}, B_MAX={1}, oldB={2}, B_ACT={3}, shade=0.", lastMortality, B_MAX,oldBiomass,B_ACT);
             
             return 0;
         }

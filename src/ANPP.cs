@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Landis.Utilities;
 
 //Note that this routine contains classes for both ANPP and MaxBiomass 
 namespace Landis.Extension.Succession.ForC
@@ -41,7 +42,7 @@ namespace Landis.Extension.Succession.ForC
             set
             {
                 if (value < 0.0)
-                    throw new Edu.Wisc.Forest.Flel.Util.InputValueException(value.ToString(), "Grams / m2-year must be >= 0.  The value provided is = {0}.", value);
+                    throw new InputValueException(value.ToString(), "Grams / m2-year must be >= 0.  The value provided is = {0}.", value);
                 m_dGramsPerMetre2Year = value;
             }
         }
@@ -55,7 +56,7 @@ namespace Landis.Extension.Succession.ForC
             set
             {
                 if (value < 0.0)
-                    throw new Edu.Wisc.Forest.Flel.Util.InputValueException(value.ToString(), "Std deviation must be >= 0.  The value provided is = {0}.", value);
+                    throw new Landis.Utilities.InputValueException(value.ToString(), "Std deviation must be >= 0.  The value provided is = {0}.", value);
                 m_dStdDev = value;
             }
         }
@@ -100,7 +101,7 @@ namespace Landis.Extension.Succession.ForC
             set
             {
                 if (value < 0.0)
-                    throw new Edu.Wisc.Forest.Flel.Util.InputValueException(value.ToString(), "Maximum biomass must be >= 0.  The value provided is = {0}.", value);
+                    throw new Landis.Utilities.InputValueException(value.ToString(), "Maximum biomass must be >= 0.  The value provided is = {0}.", value);
                 m_dMaxBiomass = value;
             }
         }
@@ -154,7 +155,7 @@ namespace Landis.Extension.Succession.ForC
             set
             {
                 if (value < 0.0)
-                    throw new Edu.Wisc.Forest.Flel.Util.InputValueException(value.ToString(), "Establishment Probability must be >= 0.  The value provided is = {0}.", value);
+                    throw new Landis.Utilities.InputValueException(value.ToString(), "Establishment Probability must be >= 0.  The value provided is = {0}.", value);
                 m_dEstabProb = value;
             }
         }

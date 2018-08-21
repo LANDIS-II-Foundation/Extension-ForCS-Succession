@@ -1,9 +1,6 @@
-//  Copyright 2009 Conservation Biology Institute
-//  Authors:  Robert M. Scheller
-//  License:  Available at  
-//  http://www.landis-ii.org/developers/LANDIS-IISourceCodeLicenseAgreement.pdf
+//  Authors:  Caren Dymond, Sarah Beukema
 
-using Edu.Wisc.Forest.Flel.Util;
+using Landis.Utilities;
 
 namespace Landis.Extension.Succession.ForC
 {

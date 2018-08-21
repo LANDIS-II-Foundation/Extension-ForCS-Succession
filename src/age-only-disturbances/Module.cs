@@ -40,7 +40,7 @@ namespace Landis.Extension.Succession.ForC.AgeOnlyDisturbances
             SiteCohorts.AgeOnlyDisturbanceEvent += Events.SiteDisturbed;
 
 /*            if (filename != null) {
-                PlugIn.ModelCore.Log.WriteLine("Loading biomass parameters for age-only disturbances from file \"{0}\" ...", filename);
+                PlugIn.ModelCore.UI.WriteLine("Loading biomass parameters for age-only disturbances from file \"{0}\" ...", filename);
                 DatasetParser parser = new DatasetParser();
                 try
                 {

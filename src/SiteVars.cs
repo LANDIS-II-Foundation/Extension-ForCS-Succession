@@ -81,12 +81,12 @@ namespace Landis.Extension.Succession.ForC
                 Process currentProcess = System.Diagnostics.Process.GetCurrentProcess();  //temporary - for memory testing SEPT
                 double totalMBOfPhysicalMemory = currentProcess.WorkingSet64 / 100000.0;
                 double totalMBOfVirtualMemory = currentProcess.VirtualMemorySize64 / 100000.0;
-                //PlugIn.ModelCore.Log.WriteLine("Before a Site Physical, Virtual Memory Use: " + totalMBOfPhysicalMemory.ToString() + ", " + totalMBOfVirtualMemory.ToString());
+                //PlugIn.ModelCore.UI.WriteLine("Before a Site Physical, Virtual Memory Use: " + totalMBOfPhysicalMemory.ToString() + ", " + totalMBOfVirtualMemory.ToString());
 
                 soilClass[site] = new SoilClass(iParams, site);
                 totalMBOfPhysicalMemory = currentProcess.WorkingSet64 / 100000.0;
                 totalMBOfVirtualMemory = currentProcess.VirtualMemorySize64 / 100000.0;
-                //PlugIn.ModelCore.Log.WriteLine("After a Site Physical, Virtual Memory Use: " + totalMBOfPhysicalMemory.ToString() + ", " + totalMBOfVirtualMemory.ToString());
+                //PlugIn.ModelCore.UI.WriteLine("After a Site Physical, Virtual Memory Use: " + totalMBOfPhysicalMemory.ToString() + ", " + totalMBOfVirtualMemory.ToString());
 
             }
             

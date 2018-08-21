@@ -1,9 +1,8 @@
-//  Copyright 2005-2010 Portland State University, University of Wisconsin
-//  Authors:  Robert M. Scheller, James B. Domingo
+//  Authors:  Caren Dymond, Sarah Beukema
 
 using Landis.Core;
 using System.Collections.Generic;
-using Edu.Wisc.Forest.Flel.Util;
+using Landis.Utilities;
 
 namespace Landis.Extension.Succession.ForC.AgeOnlyDisturbances
 {
@@ -12,7 +11,7 @@ namespace Landis.Extension.Succession.ForC.AgeOnlyDisturbances
     /// disturbances from text input.
     /// </summary>
     public class DatasetParser
-        : Edu.Wisc.Forest.Flel.Util.TextParser<IParameterDataset>
+        : Landis.Utilities.TextParser<IParameterDataset>
     {
         private Dictionary<string, int> lineNums;
 
@@ -63,7 +62,7 @@ namespace Landis.Extension.Succession.ForC.AgeOnlyDisturbances
         {
             ReadName(tableName);
             
-            PlugIn.ModelCore.Log.WriteLine("      Reading {0}.", tableName);
+            PlugIn.ModelCore.UI.WriteLine("      Reading {0}.", tableName);
 
             InputVar<string> disturbance = new InputVar<string>("Disturbance");
             InputVar<Percentage> woodPercentage = new InputVar<Percentage>("Woody");
@@ -102,7 +101,7 @@ namespace Landis.Extension.Succession.ForC.AgeOnlyDisturbances
                     //percentages = table[disturbanceType];
                     table[disturbanceType] = new PoolPercentages();
                     percentages = table[disturbanceType];
-                    PlugIn.ModelCore.Log.WriteLine("         Adding {0}...", disturbanceType);
+                    PlugIn.ModelCore.UI.WriteLine("         Adding {0}...", disturbanceType);
                 }
 
                 ReadValue(woodPercentage, currentLine);

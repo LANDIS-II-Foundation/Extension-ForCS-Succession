@@ -1,12 +1,12 @@
-//  Copyright 2005-2010 Portland State University, University of Wisconsin
-//  Authors:  Robert M. Scheller, James B. Domingo
+//  Authors:  Caren Dymond, Sarah Beukema
 
 using Landis.SpatialModeling;
 using Landis.Library.BiomassCohorts;
 using Landis.Core;
 using System.Collections.Generic;
-using Edu.Wisc.Forest.Flel.Util;
+using Landis.Utilities;
 using Landis.Library.Succession;
+using Landis.Library.Parameters;
 using System.IO;
 using System;
 
@@ -15,29 +15,29 @@ namespace Landis.Extension.Succession.ForC
 {
     public class SpeciesData
     {
-        public static Species.AuxParm<int> FuncType;
-        public static Species.AuxParm<double> LeafLongevity;
-        public static Species.AuxParm<bool> Epicormic;
+        public static Landis.Library.Parameters.Species.AuxParm<int> FuncType;
+        public static Landis.Library.Parameters.Species.AuxParm<double> LeafLongevity;
+        public static Landis.Library.Parameters.Species.AuxParm<bool> Epicormic;
         
-        public static Species.AuxParm<double> MortCurveShape;
+        public static Landis.Library.Parameters.Species.AuxParm<double> MortCurveShape;
 
-        public static Species.AuxParm<int> MerchStemsMinAge;
-        public static Species.AuxParm<double> MerchCurveParmA;
-        public static Species.AuxParm<double> MerchCurveParmB;
-        public static Species.AuxParm<double> PropNonMerch;
+        public static Landis.Library.Parameters.Species.AuxParm<int> MerchStemsMinAge;
+        public static Landis.Library.Parameters.Species.AuxParm<double> MerchCurveParmA;
+        public static Landis.Library.Parameters.Species.AuxParm<double> MerchCurveParmB;
+        public static Landis.Library.Parameters.Species.AuxParm<double> PropNonMerch;
 
-        public static Species.AuxParm<Ecoregions.AuxParm<double>> EstablishProbability;
-        public static Species.AuxParm<Ecoregions.AuxParm<double>> ANPP_MAX_Spp;
-        public static Species.AuxParm<Ecoregions.AuxParm<int>> B_MAX_Spp;
+        public static Landis.Library.Parameters.Species.AuxParm<Landis.Library.Parameters.Ecoregions.AuxParm<double>> EstablishProbability;
+        public static Landis.Library.Parameters.Species.AuxParm<Landis.Library.Parameters.Ecoregions.AuxParm<double>> ANPP_MAX_Spp;
+        public static Landis.Library.Parameters.Species.AuxParm<Landis.Library.Parameters.Ecoregions.AuxParm<int>> B_MAX_Spp;
         //  Establishment probability modifier for each species in each ecoregion (from biomass succession)
-        public static Species.AuxParm<Ecoregions.AuxParm<double>> EstablishModifier;
+        public static Landis.Library.Parameters.Species.AuxParm<Landis.Library.Parameters.Ecoregions.AuxParm<double>> EstablishModifier;
 
         //root parameterss
-        public static Species.AuxParm<Ecoregions.AuxParm<double[]>> MinWoodyBio;
-        public static Species.AuxParm<Ecoregions.AuxParm<double[]>> Ratio;
-        public static Species.AuxParm<Ecoregions.AuxParm<double[]>> PropFine;
-        public static Species.AuxParm<Ecoregions.AuxParm<double[]>> FineTurnover;
-        public static Species.AuxParm<Ecoregions.AuxParm<double[]>> CoarseTurnover;
+        public static Landis.Library.Parameters.Species.AuxParm<Landis.Library.Parameters.Ecoregions.AuxParm<double[]>> MinWoodyBio;
+        public static Landis.Library.Parameters.Species.AuxParm<Landis.Library.Parameters.Ecoregions.AuxParm<double[]>> Ratio;
+        public static Landis.Library.Parameters.Species.AuxParm<Landis.Library.Parameters.Ecoregions.AuxParm<double[]>> PropFine;
+        public static Landis.Library.Parameters.Species.AuxParm<Landis.Library.Parameters.Ecoregions.AuxParm<double[]>> FineTurnover;
+        public static Landis.Library.Parameters.Species.AuxParm<Landis.Library.Parameters.Ecoregions.AuxParm<double[]>> CoarseTurnover;
 
         private static IInputParameters m_iParams;
         private static StreamWriter log;
@@ -52,9 +52,9 @@ namespace Landis.Extension.Succession.ForC
         public static void Initialize(IInputParameters parameters)
         {
             string logFileName   = "ForCS-ANPP-Establishment-log.csv"; 
-            PlugIn.ModelCore.Log.WriteLine("   Opening a Growth and Establishment log file \"{0}\" ...", logFileName);
+            PlugIn.ModelCore.UI.WriteLine("   Opening a Growth and Establishment log file \"{0}\" ...", logFileName);
             try {
-                log = PlugIn.ModelCore.CreateTextFile(logFileName);
+                log = Landis.Data.CreateTextFile(logFileName);
             }
             catch (Exception err) {
                 string mesg = string.Format("{0}", err.Message);
@@ -170,7 +170,7 @@ namespace Landis.Extension.Succession.ForC
                             {
                                 if (!bWroteMsg1)
                                 {
-                                    PlugIn.ModelCore.Log.WriteLine("ANPP values were not entered for the earliest spin-up years. Year 0 values will be used.");
+                                    PlugIn.ModelCore.UI.WriteLine("ANPP values were not entered for the earliest spin-up years. Year 0 values will be used.");
                                     bWroteMsg1 = true;
                                 }
                                 PlugIn.ModelCore.NormalDistribution.Mu = anpp.GramsPerMetre2Year;
@@ -188,7 +188,7 @@ namespace Landis.Extension.Succession.ForC
                         {
                             if (!bWroteMsg2)
                             {
-                                PlugIn.ModelCore.Log.WriteLine("MaxBiomass values were not entered for the earliest spin-up years. Year 0 values will be used.");
+                                PlugIn.ModelCore.UI.WriteLine("MaxBiomass values were not entered for the earliest spin-up years. Year 0 values will be used.");
                                 bWroteMsg2 = true;
                             }
                             if (m_iParams.MaxBiomassTimeCollection[ecoregion][species].TryGetValue(0, out maxbio))

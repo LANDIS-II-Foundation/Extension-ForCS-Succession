@@ -1,11 +1,10 @@
-//  Copyright 2007-2010 Portland State University, University of Wisconsin-Madison
-//  Author: Robert Scheller, Ben Sulman
+//  Authors:  Caren Dymond, Sarah Beukema
 
 using Landis.Library.Succession;
 using Landis.Core;
 using Landis.SpatialModeling;
 using System.Collections.Generic;
-using Edu.Wisc.Forest.Flel.Util;
+using Landis.Utilities;
 
 namespace Landis.Extension.Succession.ForC
 {
@@ -13,7 +12,7 @@ namespace Landis.Extension.Succession.ForC
     /// A parser that reads ForCS specific climate parameters from text input.
     /// </summary>
     public class InputClimateParser
-        : Edu.Wisc.Forest.Flel.Util.TextParser<IInputClimateParms>
+        : Landis.Utilities.TextParser<IInputClimateParms>
     {
         public static class Names
         {
