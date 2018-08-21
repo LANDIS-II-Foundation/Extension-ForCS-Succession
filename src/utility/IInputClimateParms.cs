@@ -1,11 +1,9 @@
-//  Copyright 2005-2010 Portland State University, University of Wisconsin
-//  Authors:  Robert M. Scheller, James B. Domingo
+//  Authors:  Caren Dymond, Sarah Beukema
 
 using Landis.Library.Succession;
 using Landis.Core;
-
-using Edu.Wisc.Forest.Flel.Util;
-
+using Landis.Utilities;
+using Landis.Library.Parameters;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -16,7 +14,7 @@ namespace Landis.Extension.Succession.ForC
     /// </summary>
     public interface IInputClimateParms
     {
-        public Ecoregions.AuxParm<ITimeCollection<IClimate>> ClimateAnnualCollection { get; }
+        Landis.Library.Parameters.Ecoregions.AuxParm<ITimeCollection<IClimate>> ClimateAnnualCollection { get; }
 
     }
 
@@ -24,8 +22,20 @@ namespace Landis.Extension.Succession.ForC
     public class InputClimateParms
         : IInputClimateParms
     {
- 
-        public Ecoregions.AuxParm<ITimeCollection<IClimate>> ClimateAnnualCollection { get { return m_ClimateAnnualCollection; } }
+        private Landis.Library.Parameters.Ecoregions.AuxParm<ITimeCollection<IClimate>> m_ClimateAnnualCollection; 
+        private IEcoregionDataset m_dsEcoregion;
+
+        public InputClimateParms()
+        {
+            this.m_dsEcoregion = PlugIn.ModelCore.Ecoregions;
+            this.m_ClimateAnnualCollection = new Landis.Library.Parameters.Ecoregions.AuxParm<ITimeCollection<IClimate>>(m_dsEcoregion);
+            foreach (IEcoregion ecoregion in m_dsEcoregion)
+            {
+                this.m_ClimateAnnualCollection[ecoregion] = new TimeCollection<IClimate>();
+            }
+
+         }
+        public Landis.Library.Parameters.Ecoregions.AuxParm<ITimeCollection<IClimate>> ClimateAnnualCollection { get { return m_ClimateAnnualCollection; } }
 
         //---------------------------------------------------------------------
 

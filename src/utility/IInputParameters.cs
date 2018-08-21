@@ -1,10 +1,9 @@
-//  Copyright 2005-2010 Portland State University, University of Wisconsin
-//  Authors:  Robert M. Scheller, James B. Domingo
+//  Authors:  Caren Dymond, Sarah Beukema
 
 using Landis.Library.Succession;
 using Landis.Core;
-
-using Edu.Wisc.Forest.Flel.Util;
+using Landis.Utilities;
+using Landis.Library.Parameters;
 
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -37,27 +36,27 @@ namespace Landis.Extension.Succession.ForC
         int SpinUpIterations { get ; }
 
         /// The maximum relative biomass for each shade class.
-        Ecoregions.AuxParm<Percentage>[] MinRelativeBiomass { get; }
+        Landis.Library.Parameters.Ecoregions.AuxParm<Percentage>[] MinRelativeBiomass { get; }
         /// Definitions of sufficient light probabilities.
         List<ISufficientLight> LightClassProbabilities { get; }
 
-        Species.AuxParm<int> SppFunctionalType { get;}
-        Species.AuxParm<double> LeafLongevity { get;}
-        Species.AuxParm<bool> Epicormic { get;}
-        Species.AuxParm<double> MortCurveShape { get;}
-        Species.AuxParm<int> MerchStemsMinAge { get;}
-        Species.AuxParm<double> MerchCurveParmA { get;}
-        Species.AuxParm<double> MerchCurveParmB { get;}
-        Species.AuxParm<double> PropNonMerch { get;}
-        Species.AuxParm<double> GrowthCurveShapeParm { get;}
+        Landis.Library.Parameters.Species.AuxParm<int> SppFunctionalType { get;}
+        Landis.Library.Parameters.Species.AuxParm<double> LeafLongevity { get;}
+        Landis.Library.Parameters.Species.AuxParm<bool> Epicormic { get;}
+        Landis.Library.Parameters.Species.AuxParm<double> MortCurveShape { get;}
+        Landis.Library.Parameters.Species.AuxParm<int> MerchStemsMinAge { get;}
+        Landis.Library.Parameters.Species.AuxParm<double> MerchCurveParmA { get;}
+        Landis.Library.Parameters.Species.AuxParm<double> MerchCurveParmB { get;}
+        Landis.Library.Parameters.Species.AuxParm<double> PropNonMerch { get;}
+        Landis.Library.Parameters.Species.AuxParm<double> GrowthCurveShapeParm { get;}
 
-        Ecoregions.AuxParm<double> FieldCapacity { get;}
-        Ecoregions.AuxParm<double> Latitude { get;}
+        Landis.Library.Parameters.Ecoregions.AuxParm<double> FieldCapacity { get;}
+        Landis.Library.Parameters.Ecoregions.AuxParm<double> Latitude { get;}
 
         IDictionary<int, IDOMPool> DOMPools { get;}
-        Ecoregions.AuxParm<Species.AuxParm<double[]>> DOMDecayRates { get;}
-        Ecoregions.AuxParm<Species.AuxParm<double[]>> DOMPoolAmountT0 { get;}
-        Ecoregions.AuxParm<Species.AuxParm<double[]>> DOMPoolQ10 { get;}
+        Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double[]>> DOMDecayRates { get;}
+        Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double[]>> DOMPoolAmountT0 { get;}
+        Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double[]>> DOMPoolQ10 { get;}
         double PropBiomassFine { get;}
         double PropBiomassCoarse { get;}
         double PropDOMSlowAGToSlowBG { get;}
@@ -65,11 +64,11 @@ namespace Landis.Extension.Succession.ForC
         double PropDOMBranchSnagToFastAG { get;}
 
         //root parameterss
-        Ecoregions.AuxParm<Species.AuxParm<double[]>> MinWoodyBio { get;}
-        Ecoregions.AuxParm<Species.AuxParm<double[]>> Ratio { get;}
-        Ecoregions.AuxParm<Species.AuxParm<double[]>> PropFine { get;}
-        Ecoregions.AuxParm<Species.AuxParm<double[]>> FineTurnover { get;}
-        Ecoregions.AuxParm<Species.AuxParm<double[]>> CoarseTurnover { get;}
+        Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double[]>> MinWoodyBio { get;}
+        Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double[]>> Ratio { get;}
+        Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double[]>> PropFine { get;}
+        Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double[]>> FineTurnover { get;}
+        Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double[]>> CoarseTurnover { get;}
 
         /*
         //MARCH: initial snag parameters
@@ -99,13 +98,13 @@ namespace Landis.Extension.Succession.ForC
         /// </summary>
         IDictionary<string, IDisturbTransferFromPools> DisturbOtherFromBiomassPools { get;}
 
-        Ecoregions.AuxParm<Species.AuxParm<ITimeCollection<IANPP>>> ANPPTimeCollection { get;}
-        Ecoregions.AuxParm<Species.AuxParm<ITimeCollection<IMaxBiomass>>> MaxBiomassTimeCollection { get;}
-        Ecoregions.AuxParm<Species.AuxParm<ITimeCollection<IEstabProb>>> EstabProbTimeCollection { get;}
+        Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<ITimeCollection<IANPP>>> ANPPTimeCollection { get;}
+        Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<ITimeCollection<IMaxBiomass>>> MaxBiomassTimeCollection { get;}
+        Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<ITimeCollection<IEstabProb>>> EstabProbTimeCollection { get;}
         //Species.AuxParm<Ecoregions.AuxParm<ITimeCollection<IEstabProb>>> EstabProbTimeCollection { get;}
 
         //Ecoregions.AuxParm<Species.AuxParm<double>> EstablishProbability { get;}
-        Species.AuxParm<Ecoregions.AuxParm<double>> EstablishProbability { get;}
+        Landis.Library.Parameters.Species.AuxParm<Landis.Library.Parameters.Ecoregions.AuxParm<double>> EstablishProbability { get;}
 
         //---------------------------------------------------------------------
 

@@ -7,7 +7,7 @@
     <AssemblyCompany>Landis-II-Foundation</AssemblyCompany>
     <AssemblyProduct>Landis.Extension.Succession.ForC</AssemblyProduct>
     <AssemblyCopyright>Landis-II-Foundation</AssemblyCopyright>
-    <AssemblyVersion>1.0</AssemblyVersion>
+    <AssemblyVersion>2.0</AssemblyVersion>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/LANDIS-II-Foundation/Extension-ForCS-Succession</RepositoryUrl>
@@ -18,7 +18,7 @@
     <Authors>Landis-II-Foundation</Authors>
     <Product>Landis.Extension.Succession.ForC</Product>
     <Copyright>Landis-II-Foundation</Copyright>
-    <Version>1.0</Version>
+    <Version>2.0</Version>
     <PackageTags>LANDIS-II;Landis;Extension;carbon</PackageTags>
     <Description>Forest Carbon Succession Extension</Description>
     <PackageReleaseNotes>.NET Standard 2.0 update</PackageReleaseNotes>

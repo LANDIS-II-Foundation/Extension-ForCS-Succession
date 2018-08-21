@@ -1,9 +1,8 @@
-//  Copyright 2005-2010 Portland State University, University of Wisconsin
-//  Authors:  Robert M. Scheller
+//  Authors:  Caren Dymond, Sarah Beukema
 
 using Landis.SpatialModeling;
 using Landis.Core;
-using Edu.Wisc.Forest.Flel.Util;
+using Landis.Utilities;
 
 namespace Landis.Extension.Succession.ForC
 {
@@ -15,24 +14,25 @@ namespace Landis.Extension.Succession.ForC
 
         //---------------------------------------------------------------------
 
-        public static Species.AuxParm<Ecoregions.AuxParm<T>> CreateSpeciesEcoregionParm<T>(ISpeciesDataset speciesDataset, IEcoregionDataset ecoregionDataset)
+        public static Landis.Library.Parameters.Species.AuxParm<Landis.Library.Parameters.Ecoregions.AuxParm<T>> CreateSpeciesEcoregionParm<T>(ISpeciesDataset speciesDataset, IEcoregionDataset ecoregionDataset)
         {
-            Species.AuxParm<Ecoregions.AuxParm<T>> newParm;
-            newParm = new Species.AuxParm<Ecoregions.AuxParm<T>>(speciesDataset);
-            foreach (ISpecies species in speciesDataset) {
-                newParm[species] = new Ecoregions.AuxParm<T>(ecoregionDataset);
+            Landis.Library.Parameters.Species.AuxParm<Landis.Library.Parameters.Ecoregions.AuxParm<T>> newParm;
+            newParm = new Landis.Library.Parameters.Species.AuxParm<Landis.Library.Parameters.Ecoregions.AuxParm<T>>(speciesDataset);
+            foreach (ISpecies species in speciesDataset)
+            {
+                newParm[species] = new Landis.Library.Parameters.Ecoregions.AuxParm<T>(ecoregionDataset);
             }
             return newParm;
         }
         //---------------------------------------------------------------------
 
-        public static Species.AuxParm<Ecoregions.AuxParm<T[]>> CreateSpeciesEcoregionArrayParm<T>(ISpeciesDataset speciesDataset, IEcoregionDataset ecoregionDataset, int n)
+        public static Landis.Library.Parameters.Species.AuxParm<Landis.Library.Parameters.Ecoregions.AuxParm<T[]>> CreateSpeciesEcoregionArrayParm<T>(ISpeciesDataset speciesDataset, IEcoregionDataset ecoregionDataset, int n)
         {
-            Species.AuxParm<Ecoregions.AuxParm<T[]>> newParm;
-            newParm = new Species.AuxParm<Ecoregions.AuxParm<T[]>>(speciesDataset);
+            Landis.Library.Parameters.Species.AuxParm<Landis.Library.Parameters.Ecoregions.AuxParm<T[]>> newParm;
+            newParm = new Landis.Library.Parameters.Species.AuxParm<Landis.Library.Parameters.Ecoregions.AuxParm<T[]>>(speciesDataset);
             foreach (ISpecies species in speciesDataset)
             {
-                newParm[species] = new Ecoregions.AuxParm<T[]>(ecoregionDataset);
+                newParm[species] = new Landis.Library.Parameters.Ecoregions.AuxParm<T[]>(ecoregionDataset);
                 foreach (IEcoregion ecoregion in ecoregionDataset)
                 {
                     newParm[species][ecoregion] = new T[n];
@@ -45,7 +45,7 @@ namespace Landis.Extension.Succession.ForC
         /// Converts a table indexed by species and ecoregion into a
         /// 2-dimensional array.
         /// </summary>
-        public static T[,] ToArray<T>(Species.AuxParm<Ecoregions.AuxParm<T>> table)
+        public static T[,] ToArray<T>(Landis.Library.Parameters.Species.AuxParm<Landis.Library.Parameters.Ecoregions.AuxParm<T>> table)
         {
             T[,] array = new T[PlugIn.ModelCore.Ecoregions.Count, PlugIn.ModelCore.Species.Count];
             foreach (ISpecies species in PlugIn.ModelCore.Species) {
@@ -102,24 +102,24 @@ namespace Landis.Extension.Succession.ForC
         }
         //---------------------------------------------------------------------
 
-        public static Ecoregions.AuxParm<T> ConvertToActualValues<T>(Ecoregions.AuxParm<InputValue<T>> inputValues)
-        {
-            Ecoregions.AuxParm<T> actualValues = new Ecoregions.AuxParm<T>(PlugIn.ModelCore.Ecoregions); //ecoregionDataset);
-            foreach (IEcoregion ecoregion in PlugIn.ModelCore.Ecoregions)//ecoregionDataset)
-                if (inputValues[ecoregion] != null)
-                    actualValues[ecoregion] = inputValues[ecoregion].Actual;
-            return actualValues;
-        }
+        //public static Landis.Library.Parameters.Ecoregions.AuxParm<T> ConvertToActualValues<T>(Landis.Library.Parameters.Ecoregions.AuxParm<InputValue<T>> inputValues)
+        //{
+        //    Landis.Library.Parameters.Ecoregions.AuxParm<T> actualValues = new Landis.Library.Parameters.Ecoregions.AuxParm<T>(PlugIn.ModelCore.Ecoregions); //ecoregionDataset);
+        //    foreach (IEcoregion ecoregion in PlugIn.ModelCore.Ecoregions)
+        //        if (inputValues[ecoregion] != null)
+        //            actualValues[ecoregion] = inputValues[ecoregion].Actual;
+        //    return actualValues;
+        //}
 
         //---------------------------------------------------------------------
 
-        public static Species.AuxParm<T> ConvertToActualValues<T>(Species.AuxParm<InputValue<T>> inputValues)
-        {
-            Species.AuxParm<T> actualValues = new Species.AuxParm<T>(PlugIn.ModelCore.Species);//speciesDataset);
-            foreach (ISpecies species in PlugIn.ModelCore.Species)//speciesDataset)
-                if (inputValues[species] != null)
-                    actualValues[species] = inputValues[species].Actual;
-            return actualValues;
-        }
+        //public static Landis.Library.Parameters.Species.AuxParm<T> ConvertToActualValues<T>(Landis.Library.Parameters.Species.AuxParm<InputValue<T>> inputValues)
+        //{
+        //    Species.AuxParm<T> actualValues = new Species.AuxParm<T>(PlugIn.ModelCore.Species);
+        //    foreach (ISpecies species in PlugIn.ModelCore.Species)
+        //        if (inputValues[species] != null)
+        //            actualValues[species] = inputValues[species].Actual;
+        //    return actualValues;
+        //}
     }
 }

@@ -1,10 +1,8 @@
-//  Copyright 2005-2010 Portland State University, University of Wisconsin
-//  Authors:  Robert M. Scheller, James B. Domingo
+//  Authors:  Caren Dymond, Sarah Beukema
 
 using Landis.Library.Succession;
 using Landis.Core;
-
-using Edu.Wisc.Forest.Flel.Util;
+using Landis.Utilities;
 
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -36,22 +34,22 @@ namespace Landis.Extension.Succession.ForC
 
         private string m_sForCSFunctionalGroupFilePath;
 
-        private Ecoregions.AuxParm<Percentage>[] minRelativeBiomass;
+        private Landis.Library.Parameters.Ecoregions.AuxParm<Percentage>[] minRelativeBiomass;
         private List<ISufficientLight> sufficientLight;
 
-        private Species.AuxParm<int> sppFunctionalType;
-        private Species.AuxParm<double> leafLongevity;
-        private Species.AuxParm<bool> epicormic;
+        private Landis.Library.Parameters.Species.AuxParm<int> sppFunctionalType;
+        private Landis.Library.Parameters.Species.AuxParm<double> leafLongevity;
+        private Landis.Library.Parameters.Species.AuxParm<bool> epicormic;
 
-        private Species.AuxParm<double> mortCurveShape;
-        private Species.AuxParm<int> m_anMerchStemsMinAge;
-        private Species.AuxParm<double> m_adMerchCurveParmA;
-        private Species.AuxParm<double> m_adMerchCurveParmB;
-        private Species.AuxParm<double> m_adPropNonMerch;
-        private Species.AuxParm<double> growthCurveShape;
+        private Landis.Library.Parameters.Species.AuxParm<double> mortCurveShape;
+        private Landis.Library.Parameters.Species.AuxParm<int> m_anMerchStemsMinAge;
+        private Landis.Library.Parameters.Species.AuxParm<double> m_adMerchCurveParmA;
+        private Landis.Library.Parameters.Species.AuxParm<double> m_adMerchCurveParmB;
+        private Landis.Library.Parameters.Species.AuxParm<double> m_adPropNonMerch;
+        private Landis.Library.Parameters.Species.AuxParm<double> growthCurveShape;
 
-        private Ecoregions.AuxParm<double> fieldCapacity;
-        private Ecoregions.AuxParm<double> latitude;
+        private Landis.Library.Parameters.Ecoregions.AuxParm<double> fieldCapacity;
+        private Landis.Library.Parameters.Ecoregions.AuxParm<double> latitude;
 
         private string ageOnlyDisturbanceParms;
         private string initCommunities;
@@ -61,10 +59,10 @@ namespace Landis.Extension.Succession.ForC
         private ISpeciesDataset m_dsSpecies;
 
         private IDictionary<int, IDOMPool> m_dictDOMPools;
-        private Ecoregions.AuxParm<Species.AuxParm<double[]>> m_aDOMDecayRates;
-        private Ecoregions.AuxParm<Species.AuxParm<double>> m_DOMInitialVFastAG;
-        private Ecoregions.AuxParm<Species.AuxParm<double[]>> m_aDOMPoolAmountT0;
-        private Ecoregions.AuxParm<Species.AuxParm<double[]>> m_aDOMPoolQ10;
+        private Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double[]>> m_aDOMDecayRates;
+        private Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double>> m_DOMInitialVFastAG;
+        private Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double[]>> m_aDOMPoolAmountT0;
+        private Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double[]>> m_aDOMPoolQ10;
         private double m_dPropBiomassFine;
         private double m_dPropBiomassCoarse;
         private double m_dPropDOMSlowAGToSlowBG;
@@ -74,19 +72,19 @@ namespace Landis.Extension.Succession.ForC
         private IDictionary<string, IDisturbTransferFromPools> m_dictDisturbOtherFromDOMPools;
         private IDisturbTransferFromPools[] m_aDisturbFireFromBiomassPools;
         private IDictionary<string, IDisturbTransferFromPools> m_dictDisturbOtherFromBiomassPools;
-        private Ecoregions.AuxParm<Species.AuxParm<ITimeCollection<IANPP>>> m_ANPPTimeCollection;
-        private Ecoregions.AuxParm<Species.AuxParm<ITimeCollection<IMaxBiomass>>> m_MaxBiomassTimeCollection;
-        private Ecoregions.AuxParm<Species.AuxParm<ITimeCollection<IEstabProb>>> m_EstabProbTimeCollection;
+        private Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<ITimeCollection<IANPP>>> m_ANPPTimeCollection;
+        private Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<ITimeCollection<IMaxBiomass>>> m_MaxBiomassTimeCollection;
+        private Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<ITimeCollection<IEstabProb>>> m_EstabProbTimeCollection;
 
         //root parameterss
-        private Ecoregions.AuxParm<Species.AuxParm<double[]>> m_MinWoodyBio;
-        private Ecoregions.AuxParm<Species.AuxParm<double[]>> m_Ratio;
-        private Ecoregions.AuxParm<Species.AuxParm<double[]>> m_PropFine;
-        private Ecoregions.AuxParm<Species.AuxParm<double[]>> m_FineTurnover;
-        private Ecoregions.AuxParm<Species.AuxParm<double[]>> m_CoarseTurnover;
+        private Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double[]>> m_MinWoodyBio;
+        private Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double[]>> m_Ratio;
+        private Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double[]>> m_PropFine;
+        private Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double[]>> m_FineTurnover;
+        private Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double[]>> m_CoarseTurnover;
 
         //private Ecoregions.AuxParm<Species.AuxParm<double>> m_dEstablishProbability ;
-        private Species.AuxParm<Ecoregions.AuxParm<double>> m_dEstablishProbability;
+        private Landis.Library.Parameters.Species.AuxParm<Landis.Library.Parameters.Ecoregions.AuxParm<double>> m_dEstablishProbability;
         //private Species.AuxParm<Ecoregions.AuxParm<ITimeCollection<IEstabProb>>> m_EstabProbTimeCollection;
 
         //Initial Snag variables
@@ -296,7 +294,7 @@ namespace Landis.Extension.Succession.ForC
         }
         //---------------------------------------------------------------------
 
-        public Ecoregions.AuxParm<Percentage>[] MinRelativeBiomass
+        public Landis.Library.Parameters.Ecoregions.AuxParm<Percentage>[] MinRelativeBiomass
         {
             get
             {
@@ -306,31 +304,31 @@ namespace Landis.Extension.Succession.ForC
 
         //---------------------------------------------------------------------
 
-        public Species.AuxParm<int> SppFunctionalType { get { return sppFunctionalType; } }
-        public Species.AuxParm<double> LeafLongevity { get { return leafLongevity; } }
-        public Species.AuxParm<bool> Epicormic { get { return epicormic; } }
-        public Species.AuxParm<double> MortCurveShape { get { return mortCurveShape; } }
-        public Species.AuxParm<int> MerchStemsMinAge { get { return m_anMerchStemsMinAge; } }
-        public Species.AuxParm<double> MerchCurveParmA { get { return m_adMerchCurveParmA; } }
-        public Species.AuxParm<double> MerchCurveParmB { get { return m_adMerchCurveParmB; } }
-        public Species.AuxParm<double> PropNonMerch { get { return m_adPropNonMerch; } }
-        public Species.AuxParm<double> GrowthCurveShapeParm { get { return growthCurveShape; } }
+        public Landis.Library.Parameters.Species.AuxParm<int> SppFunctionalType { get { return sppFunctionalType; } }
+        public Landis.Library.Parameters.Species.AuxParm<double> LeafLongevity { get { return leafLongevity; } }
+        public Landis.Library.Parameters.Species.AuxParm<bool> Epicormic { get { return epicormic; } }
+        public Landis.Library.Parameters.Species.AuxParm<double> MortCurveShape { get { return mortCurveShape; } }
+        public Landis.Library.Parameters.Species.AuxParm<int> MerchStemsMinAge { get { return m_anMerchStemsMinAge; } }
+        public Landis.Library.Parameters.Species.AuxParm<double> MerchCurveParmA { get { return m_adMerchCurveParmA; } }
+        public Landis.Library.Parameters.Species.AuxParm<double> MerchCurveParmB { get { return m_adMerchCurveParmB; } }
+        public Landis.Library.Parameters.Species.AuxParm<double> PropNonMerch { get { return m_adPropNonMerch; } }
+        public Landis.Library.Parameters.Species.AuxParm<double> GrowthCurveShapeParm { get { return growthCurveShape; } }
 
         public IDictionary<int, IDOMPool> DOMPools { get { return m_dictDOMPools; } }
-        public Ecoregions.AuxParm<Species.AuxParm<double[]>> DOMDecayRates { get { return m_aDOMDecayRates; } }
-        public Ecoregions.AuxParm<Species.AuxParm<double[]>> DOMPoolAmountT0 { get { return m_aDOMPoolAmountT0; } }
-        public Ecoregions.AuxParm<Species.AuxParm<double[]>> DOMPoolQ10 { get { return m_aDOMPoolQ10; } }
+        public Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double[]>> DOMDecayRates { get { return m_aDOMDecayRates; } }
+        public Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double[]>> DOMPoolAmountT0 { get { return m_aDOMPoolAmountT0; } }
+        public Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double[]>> DOMPoolQ10 { get { return m_aDOMPoolQ10; } }
         public double PropBiomassFine { get { return m_dPropBiomassFine; } }
         public double PropBiomassCoarse { get { return m_dPropBiomassCoarse; } }
         public double PropDOMSlowAGToSlowBG { get { return m_dPropDOMSlowAGToSlowBG; } }
         public double PropDOMStemSnagToMedium { get { return m_dPropDOMStemSnagToMedium; } }
         public double PropDOMBranchSnagToFastAG { get { return m_dPropDOMBranchSnagToFastAG; } }
 
-        public Ecoregions.AuxParm<Species.AuxParm<double[]>> CoarseTurnover { get { return m_CoarseTurnover; } }
-        public Ecoregions.AuxParm<Species.AuxParm<double[]>> FineTurnover { get { return m_FineTurnover; } }
-        public Ecoregions.AuxParm<Species.AuxParm<double[]>> Ratio { get { return m_Ratio; } }
-        public Ecoregions.AuxParm<Species.AuxParm<double[]>> PropFine { get { return m_PropFine; } }
-        public Ecoregions.AuxParm<Species.AuxParm<double[]>> MinWoodyBio { get { return m_MinWoodyBio; } }
+        public Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double[]>> CoarseTurnover { get { return m_CoarseTurnover; } }
+        public Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double[]>> FineTurnover { get { return m_FineTurnover; } }
+        public Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double[]>> Ratio { get { return m_Ratio; } }
+        public Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double[]>> PropFine { get { return m_PropFine; } }
+        public Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<double[]>> MinWoodyBio { get { return m_MinWoodyBio; } }
 
 
         /// <summary>
@@ -353,16 +351,16 @@ namespace Landis.Extension.Succession.ForC
         /// </summary>
         public IDictionary<string, IDisturbTransferFromPools> DisturbOtherFromBiomassPools { get { return m_dictDisturbOtherFromBiomassPools; } }
 
-        public Ecoregions.AuxParm<Species.AuxParm<ITimeCollection<IANPP>>> ANPPTimeCollection { get { return m_ANPPTimeCollection; } }
-        public Ecoregions.AuxParm<Species.AuxParm<ITimeCollection<IMaxBiomass>>> MaxBiomassTimeCollection { get { return m_MaxBiomassTimeCollection; } }
-        public Ecoregions.AuxParm<Species.AuxParm<ITimeCollection<IEstabProb>>> EstabProbTimeCollection { get { return m_EstabProbTimeCollection; } }
+        public Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<ITimeCollection<IANPP>>> ANPPTimeCollection { get { return m_ANPPTimeCollection; } }
+        public Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<ITimeCollection<IMaxBiomass>>> MaxBiomassTimeCollection { get { return m_MaxBiomassTimeCollection; } }
+        public Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<ITimeCollection<IEstabProb>>> EstabProbTimeCollection { get { return m_EstabProbTimeCollection; } }
         
         //public Ecoregions.AuxParm<Species.AuxParm<double>> EstablishProbability { get { return m_dEstablishProbability; } }
-        public Species.AuxParm<Ecoregions.AuxParm<double>> EstablishProbability { get { return m_dEstablishProbability; } }
+        public Landis.Library.Parameters.Species.AuxParm<Landis.Library.Parameters.Ecoregions.AuxParm<double>> EstablishProbability { get { return m_dEstablishProbability; } }
         //public Species.AuxParm<Ecoregions.AuxParm<ITimeCollection<IEstabProb>>> EstabProbTimeCollection { get { return m_EstabProbTimeCollection; } }
 
         //---------------------------------------------------------------------
-        public Ecoregions.AuxParm<double> FieldCapacity
+        public Landis.Library.Parameters.Ecoregions.AuxParm<double> FieldCapacity
         {
             get
             {
@@ -371,7 +369,7 @@ namespace Landis.Extension.Succession.ForC
         }
 
         //---------------------------------------------------------------------
-        public Ecoregions.AuxParm<double> Latitude
+        public Landis.Library.Parameters.Ecoregions.AuxParm<double> Latitude
         {
             get
             {
@@ -512,7 +510,7 @@ namespace Landis.Extension.Succession.ForC
             if (newValue.Actual < 0)
                 throw new InputValueException(newValue.String, "SpeciesParameters.MinAge: {0} is not greater than 0.", newValue.String);
             if (newValue.Actual > species.Longevity)
-                PlugIn.ModelCore.Log.WriteLine("SpeciesParameters.MinAge: Species {0} has MinAge of {1} which is greater than the species longevity.", species.Name, newValue.String);
+                PlugIn.ModelCore.UI.WriteLine("SpeciesParameters.MinAge: Species {0} has MinAge of {1} which is greater than the species longevity.", species.Name, newValue.String);
             m_anMerchStemsMinAge[species] = newValue;
         }
         //---------------------------------------------------------------------
@@ -587,7 +585,7 @@ namespace Landis.Extension.Succession.ForC
                 int actPool = idxDOMPool + 1;
                 strCombo += " DOMPool: ";
                 strCombo += actPool;
-                PlugIn.ModelCore.Log.WriteLine("Warning: Decay rate for " + strCombo + " is 0. No decay will occur.");
+                PlugIn.ModelCore.UI.WriteLine("Warning: Decay rate for " + strCombo + " is 0. No decay will occur.");
             }
             this.m_aDOMDecayRates[ecoregion][species][idxDOMPool] = Util.CheckBiomassParm(newValue, 0.0, 1.0);
         }
@@ -604,7 +602,7 @@ namespace Landis.Extension.Succession.ForC
                 int actPool = idxDOMPool + 1;
                 strCombo += " DOMPool: ";
                 strCombo += actPool;
-                PlugIn.ModelCore.Log.WriteLine("Warning: Initial DOM value for " + strCombo + " is 0. This can cause modelling artifacts.");
+                PlugIn.ModelCore.UI.WriteLine("Warning: Initial DOM value for " + strCombo + " is 0. This can cause modelling artifacts.");
             }
             this.m_aDOMPoolAmountT0[ecoregion][species][idxDOMPool] = newValue;
         }
@@ -760,26 +758,26 @@ namespace Landis.Extension.Succession.ForC
         public InputParameters()
         {
 
-            minRelativeBiomass = new Ecoregions.AuxParm<Percentage>[6];
+            minRelativeBiomass = new Landis.Library.Parameters.Ecoregions.AuxParm<Percentage>[6];
             for (byte shadeClass = 1; shadeClass <= 5; shadeClass++)
             {
-                minRelativeBiomass[shadeClass] = new Ecoregions.AuxParm<Percentage>(PlugIn.ModelCore.Ecoregions);
+                minRelativeBiomass[shadeClass] = new Landis.Library.Parameters.Ecoregions.AuxParm<Percentage>(PlugIn.ModelCore.Ecoregions);
             }
 
             sufficientLight = new List<ISufficientLight>();
 
-            sppFunctionalType = new Species.AuxParm<int>(PlugIn.ModelCore.Species);
-            leafLongevity = new Species.AuxParm<double>(PlugIn.ModelCore.Species);
-            epicormic = new Species.AuxParm<bool>(PlugIn.ModelCore.Species);
-            mortCurveShape = new Species.AuxParm<double>(PlugIn.ModelCore.Species);
-            m_anMerchStemsMinAge = new Species.AuxParm<int>(PlugIn.ModelCore.Species);
-            m_adMerchCurveParmA = new Species.AuxParm<double>(PlugIn.ModelCore.Species);
-            m_adMerchCurveParmB = new Species.AuxParm<double>(PlugIn.ModelCore.Species);
-            m_adPropNonMerch = new Species.AuxParm<double>(PlugIn.ModelCore.Species);
-            growthCurveShape = new Species.AuxParm<double>(PlugIn.ModelCore.Species);
+            sppFunctionalType = new Landis.Library.Parameters.Species.AuxParm<int>(PlugIn.ModelCore.Species);
+            leafLongevity = new Landis.Library.Parameters.Species.AuxParm<double>(PlugIn.ModelCore.Species);
+            epicormic = new Landis.Library.Parameters.Species.AuxParm<bool>(PlugIn.ModelCore.Species);
+            mortCurveShape = new Landis.Library.Parameters.Species.AuxParm<double>(PlugIn.ModelCore.Species);
+            m_anMerchStemsMinAge = new Landis.Library.Parameters.Species.AuxParm<int>(PlugIn.ModelCore.Species);
+            m_adMerchCurveParmA = new Landis.Library.Parameters.Species.AuxParm<double>(PlugIn.ModelCore.Species);
+            m_adMerchCurveParmB = new Landis.Library.Parameters.Species.AuxParm<double>(PlugIn.ModelCore.Species);
+            m_adPropNonMerch = new Landis.Library.Parameters.Species.AuxParm<double>(PlugIn.ModelCore.Species);
+            growthCurveShape = new Landis.Library.Parameters.Species.AuxParm<double>(PlugIn.ModelCore.Species);
 
-            fieldCapacity = new Ecoregions.AuxParm<double>(PlugIn.ModelCore.Ecoregions);
-            latitude = new Ecoregions.AuxParm<double>(PlugIn.ModelCore.Ecoregions);
+            fieldCapacity = new Landis.Library.Parameters.Ecoregions.AuxParm<double>(PlugIn.ModelCore.Ecoregions);
+            latitude = new Landis.Library.Parameters.Ecoregions.AuxParm<double>(PlugIn.ModelCore.Ecoregions);
 
             this.m_dsSpecies = PlugIn.ModelCore.Species;
             this.m_dsEcoregion = PlugIn.ModelCore.Ecoregions;
@@ -819,14 +817,14 @@ namespace Landis.Extension.Succession.ForC
             this.m_SnagDisturb = new string[20];
             */
             // ANPP and Max Biomass Time Collection
-            this.m_ANPPTimeCollection = new Ecoregions.AuxParm<Species.AuxParm<ITimeCollection<IANPP>>>(m_dsEcoregion);
-            this.m_MaxBiomassTimeCollection = new Ecoregions.AuxParm<Species.AuxParm<ITimeCollection<IMaxBiomass>>>(m_dsEcoregion);
-            this.m_EstabProbTimeCollection = new Ecoregions.AuxParm<Species.AuxParm<ITimeCollection<IEstabProb>>>(m_dsEcoregion);
+            this.m_ANPPTimeCollection = new Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<ITimeCollection<IANPP>>>(m_dsEcoregion);
+            this.m_MaxBiomassTimeCollection = new Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<ITimeCollection<IMaxBiomass>>>(m_dsEcoregion);
+            this.m_EstabProbTimeCollection = new Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<ITimeCollection<IEstabProb>>>(m_dsEcoregion);
             foreach (IEcoregion ecoregion in m_dsEcoregion)
             {
-                this.m_ANPPTimeCollection[ecoregion] = new Species.AuxParm<ITimeCollection<IANPP>>(m_dsSpecies);
-                this.m_MaxBiomassTimeCollection[ecoregion] = new Species.AuxParm<ITimeCollection<IMaxBiomass>>(m_dsSpecies);
-                this.m_EstabProbTimeCollection[ecoregion] = new Species.AuxParm<ITimeCollection<IEstabProb>>(m_dsSpecies);
+                this.m_ANPPTimeCollection[ecoregion] = new Landis.Library.Parameters.Species.AuxParm<ITimeCollection<IANPP>>(m_dsSpecies);
+                this.m_MaxBiomassTimeCollection[ecoregion] = new Landis.Library.Parameters.Species.AuxParm<ITimeCollection<IMaxBiomass>>(m_dsSpecies);
+                this.m_EstabProbTimeCollection[ecoregion] = new Landis.Library.Parameters.Species.AuxParm<ITimeCollection<IEstabProb>>(m_dsSpecies);
                 foreach (ISpecies species in m_dsSpecies)
                 {
                     this.m_ANPPTimeCollection[ecoregion][species] = new TimeCollection<IANPP>();
@@ -838,35 +836,35 @@ namespace Landis.Extension.Succession.ForC
             this.m_dEstablishProbability = CreateSpeciesEcoregionParm<double>();
        }
 
-        private Species.AuxParm<Ecoregions.AuxParm<T>> CreateSpeciesEcoregionParm<T>()
+        private Landis.Library.Parameters.Species.AuxParm<Landis.Library.Parameters.Ecoregions.AuxParm<T>> CreateSpeciesEcoregionParm<T>()
         {
-            Species.AuxParm<Ecoregions.AuxParm<T>> newParm;
-            newParm = new Species.AuxParm<Ecoregions.AuxParm<T>>(m_dsSpecies);
+            Landis.Library.Parameters.Species.AuxParm<Landis.Library.Parameters.Ecoregions.AuxParm<T>> newParm;
+            newParm = new Landis.Library.Parameters.Species.AuxParm<Landis.Library.Parameters.Ecoregions.AuxParm<T>>(m_dsSpecies);
             foreach (ISpecies species in m_dsSpecies)
             {
-                newParm[species] = new Ecoregions.AuxParm<T>(m_dsEcoregion);
+                newParm[species] = new Landis.Library.Parameters.Ecoregions.AuxParm<T>(m_dsEcoregion);
             }
             return newParm;
         }
 
-        private Ecoregions.AuxParm<Species.AuxParm<T>> CreateEcoregionSpeciesParm<T>()
+        private Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<T>> CreateEcoregionSpeciesParm<T>()
         {
-            Ecoregions.AuxParm<Species.AuxParm<T>> newParm;
-            newParm = new Ecoregions.AuxParm<Species.AuxParm<T>>(m_dsEcoregion);
+            Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<T>> newParm;
+            newParm = new Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<T>>(m_dsEcoregion);
             foreach (IEcoregion ecoregion in m_dsEcoregion)
             {
-                newParm[ecoregion] = new Species.AuxParm<T>(m_dsSpecies);
+                newParm[ecoregion] = new Landis.Library.Parameters.Species.AuxParm<T>(m_dsSpecies);
             }
             return newParm;
         }
 
-        private Ecoregions.AuxParm<Species.AuxParm<T[]>> CreateEcoregionSpeciesPoolParm<T>(int n)
+        private Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<T[]>> CreateEcoregionSpeciesPoolParm<T>(int n)
         {
-            Ecoregions.AuxParm<Species.AuxParm<T[]>> newParm;
-            newParm = new Ecoregions.AuxParm<Species.AuxParm<T[]>>(m_dsEcoregion);
+            Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<T[]>> newParm;
+            newParm = new Landis.Library.Parameters.Ecoregions.AuxParm<Landis.Library.Parameters.Species.AuxParm<T[]>>(m_dsEcoregion);
             foreach (IEcoregion ecoregion in m_dsEcoregion)
             {
-                newParm[ecoregion] = new Species.AuxParm<T[]>(m_dsSpecies);
+                newParm[ecoregion] = new Landis.Library.Parameters.Species.AuxParm<T[]>(m_dsSpecies);
                 foreach (ISpecies species in m_dsSpecies)
                 {
                     newParm[ecoregion][species] = new T[n];

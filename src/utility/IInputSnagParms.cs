@@ -1,10 +1,8 @@
-//  Copyright 2005-2010 Portland State University, University of Wisconsin
-//  Authors:  Robert M. Scheller, James B. Domingo
+//  Authors:  Caren Dymond, Sarah Beukema
 
 using Landis.Library.Succession;
 using Landis.Core;
-
-using Edu.Wisc.Forest.Flel.Util;
+using Landis.Utilities;
 
 using System.Collections.Generic;
 using System.Diagnostics;

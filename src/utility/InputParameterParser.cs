@@ -1,11 +1,10 @@
-//  Copyright 2007-2010 Portland State University, University of Wisconsin-Madison
-//  Author: Robert Scheller, Ben Sulman
+//  Authors:  Caren Dymond, Sarah Beukema
 
 using Landis.Library.Succession;
 using Landis.Core;
 using Landis.SpatialModeling;
 using System.Collections.Generic;
-using Edu.Wisc.Forest.Flel.Util;
+using Landis.Utilities;
 
 namespace Landis.Extension.Succession.ForC
 {
@@ -13,7 +12,7 @@ namespace Landis.Extension.Succession.ForC
     /// A parser that reads biomass succession parameters from text input.
     /// </summary>
     public class InputParametersParser
-        : Edu.Wisc.Forest.Flel.Util.TextParser<IInputParameters>
+        : Landis.Utilities.TextParser<IInputParameters>
     {
         public static class Names
         {
@@ -511,10 +510,10 @@ namespace Landis.Extension.Succession.ForC
                 oDisturbTransfer.PropToFPS = dPropFPS.Value;
 
                 if ((nDOMPoolID.Value == 2 || nDOMPoolID.Value == 4 || nDOMPoolID.Value == 7) && dPropFPS.Value > 0)
-                    PlugIn.ModelCore.Log.WriteLine("DisturbFireTransferDOM: You have asked for belowground DOM pools to be transfered to the FPS after a fire. Please check.");
+                    PlugIn.ModelCore.UI.WriteLine("DisturbFireTransferDOM: You have asked for belowground DOM pools to be transfered to the FPS after a fire. Please check.");
 
                 if ((dPropAir.Value + dPropDOM.Value + dPropFPS.Value) > 1.0)
-                    PlugIn.ModelCore.Log.WriteLine("DisturbFireTransferDOM: Proportions must not be greater than 1.");
+                    PlugIn.ModelCore.UI.WriteLine("DisturbFireTransferDOM: Proportions must not be greater than 1.");
 
                 nread += 1;
                 CheckNoDataAfter(lastColumn, currentLine);
@@ -523,7 +522,7 @@ namespace Landis.Extension.Succession.ForC
             parameters.SetDisturbFireFromDOMPools(aDisturbTransferPools);
 
             if (nread < FireEffects.mk_nIntensityCount * (SoilClass.NUMSOILPOOLS-1))
-                PlugIn.ModelCore.Log.WriteLine("DisturbFireTransferDOM: Some rows are missing. C in these DOM pools will not be affected by the fire.");
+                PlugIn.ModelCore.UI.WriteLine("DisturbFireTransferDOM: Some rows are missing. C in these DOM pools will not be affected by the fire.");
 
             //-------------------------
             //  DisturbOtherTransferDOM Parameters
@@ -567,10 +566,10 @@ namespace Landis.Extension.Succession.ForC
                 oDisturbTransfer.PropToFPS = dPropFPS.Value;
 
                 if ((nDOMPoolID.Value == 2 || nDOMPoolID.Value == 4 || nDOMPoolID.Value == 7) && dPropFPS.Value > 0)
-                    PlugIn.ModelCore.Log.WriteLine("DisturbOtherTransferDOM: You have asked for belowground DOM pools to be transfered to the FPS after a disturbance. Please check.");
+                    PlugIn.ModelCore.UI.WriteLine("DisturbOtherTransferDOM: You have asked for belowground DOM pools to be transfered to the FPS after a disturbance. Please check.");
 
                 if ((dPropAir.Value + dPropDOM.Value + dPropFPS.Value) > 1.0 )
-                    PlugIn.ModelCore.Log.WriteLine("DisturbOtherTransferDOM: Proportions must not be greater than 1.");
+                    PlugIn.ModelCore.UI.WriteLine("DisturbOtherTransferDOM: Proportions must not be greater than 1.");
 
                 nread += 1;
                 CheckNoDataAfter(lastColumn, currentLine);
@@ -579,7 +578,7 @@ namespace Landis.Extension.Succession.ForC
             parameters.SetDisturbOtherFromDOMPools(dictDisturbTransfer);
 
             if (nread < 3 * (SoilClass.NUMSOILPOOLS-1))
-                PlugIn.ModelCore.Log.WriteLine("DisturbOtherFromDOMPools: Some rows are missing. C in these DOM pools will not be affected by the disturbance.");
+                PlugIn.ModelCore.UI.WriteLine("DisturbOtherFromDOMPools: Some rows are missing. C in these DOM pools will not be affected by the disturbance.");
 
             //-------------------------
             //  DisturbFireTransferBiomass Parameters
@@ -616,13 +615,13 @@ namespace Landis.Extension.Succession.ForC
                 oDisturbTransfer.PropToFPS = dPropFPS.Value;
 
                 if (dPropFPS.Value > 0)
-                    PlugIn.ModelCore.Log.WriteLine("DisturbFireTransferBiomass: Warning: you have asked for C to go to the FPS after a fire. Is this correct?");
+                    PlugIn.ModelCore.UI.WriteLine("DisturbFireTransferBiomass: Warning: you have asked for C to go to the FPS after a fire. Is this correct?");
 
                 ReadValue(dPropDOM, currentLine);
                 oDisturbTransfer.PropToDOM = dPropDOM.Value;
 
                 if ((dPropAir.Value + dPropDOM.Value + dPropFPS.Value) != 1.0)
-                    PlugIn.ModelCore.Log.WriteLine("DisturbFireTransferBiomass: Proportions must add to 1.");
+                    PlugIn.ModelCore.UI.WriteLine("DisturbFireTransferBiomass: Proportions must add to 1.");
 
                 nread += 1;
 
@@ -632,7 +631,7 @@ namespace Landis.Extension.Succession.ForC
             parameters.SetDisturbFireFromBiomassPools(aDisturbTransferPools);
 
             if (nread < FireEffects.mk_nIntensityCount * (SoilClass.NUMBIOMASSCOMPONENTS-1))
-                PlugIn.ModelCore.Log.WriteLine("DisturbFireTransferBiomass: Some combinations of Fire Intensity and biomass type are missing. When these biomass components are killed, C loss will not be captured.");
+                PlugIn.ModelCore.UI.WriteLine("DisturbFireTransferBiomass: Some combinations of Fire Intensity and biomass type are missing. When these biomass components are killed, C loss will not be captured.");
 
             //-------------------------
             //  DisturbOtherTransferBiomass Parameters
@@ -674,13 +673,13 @@ namespace Landis.Extension.Succession.ForC
                 oDisturbTransfer.PropToFPS = dPropFPS.Value;
 
                 if (nBiomassPoolID.Value >= 5 && dPropFPS.Value > 0)
-                    PlugIn.ModelCore.Log.WriteLine("DisturbOtherTransferBiomass: Warning: you have asked for root C to go to the FPS. Is this correct?");
+                    PlugIn.ModelCore.UI.WriteLine("DisturbOtherTransferBiomass: Warning: you have asked for root C to go to the FPS. Is this correct?");
 
                 ReadValue(dPropDOM, currentLine);
                 oDisturbTransfer.PropToDOM = dPropDOM.Value;
 
                 if ((dPropAir.Value + dPropDOM.Value + dPropFPS.Value) != 1.0)
-                    PlugIn.ModelCore.Log.WriteLine("DisturbOtherTransferBiomass: Proportions must add to 1.");
+                    PlugIn.ModelCore.UI.WriteLine("DisturbOtherTransferBiomass: Proportions must add to 1.");
 
                 nread += 1;
                 CheckNoDataAfter(lastColumn, currentLine);
@@ -689,7 +688,7 @@ namespace Landis.Extension.Succession.ForC
             parameters.SetDisturbOtherFromBiomassPools(dictDisturbTransfer);
 
             if (nread < 3 * (SoilClass.NUMBIOMASSCOMPONENTS-1))
-                PlugIn.ModelCore.Log.WriteLine("DisturbOtherTransferBiomass: Some biomass components are missing. When these biomass components are killed, C loss will not be captured.");
+                PlugIn.ModelCore.UI.WriteLine("DisturbOtherTransferBiomass: Some biomass components are missing. When these biomass components are killed, C loss will not be captured.");
 
             //-------------------------
             //  ANPPTimeSeries
@@ -743,7 +742,7 @@ namespace Landis.Extension.Succession.ForC
 
             if (nread < neco * speciesDataset.Count)
                 throw new InputValueException("ANPP", "ANPP values were not entered for year 0 for all species and ecoregions! Please check.");
-                //PlugIn.ModelCore.Log.WriteLine("ANPP: ANPP values wre not entered for year 0 for all species and ecoregions! Please check.");
+                //PlugIn.ModelCore.UI.WriteLine("ANPP: ANPP values wre not entered for year 0 for all species and ecoregions! Please check.");
 
             //-------------------------
             //  Maximum Biomass TimeSeries
@@ -823,7 +822,7 @@ namespace Landis.Extension.Succession.ForC
             }
             if (nread < neco * speciesDataset.Count)
                 throw new InputValueException("Establishment Probabilities", "EstablishmentProbabilities: Establishment probabilities were not entered for all species and ecoregions! Please check.");
-            //PlugIn.ModelCore.Log.WriteLine("EstablishmentProbabilities: Establishment probabilities were not entered for all species and ecoregions! Please check.");
+            //PlugIn.ModelCore.UI.WriteLine("EstablishmentProbabilities: Establishment probabilities were not entered for all species and ecoregions! Please check.");
 
 
             //-------------------------
@@ -850,9 +849,9 @@ namespace Landis.Extension.Succession.ForC
                 int idxval = parameters.SetMinWoodyBio(ecoregion, species, dMinWoody.Value);
 
                 if (idxval > 0 && dMinWoody.Value == 0)
-                    PlugIn.ModelCore.Log.WriteLine("Root Parameters: The MinBiomass=0 for an eco-spp combo was not entered first. Roots may not be calculated correctly");
+                    PlugIn.ModelCore.UI.WriteLine("Root Parameters: The MinBiomass=0 for an eco-spp combo was not entered first. Roots may not be calculated correctly");
                 if (idxval == 0 && dMinWoody.Value > 0)
-                    PlugIn.ModelCore.Log.WriteLine("Root Parameters: The first MinBiomass value entered for an eco-spp combo was not 0.  Roots may not be calculated correctly");
+                    PlugIn.ModelCore.UI.WriteLine("Root Parameters: The first MinBiomass value entered for an eco-spp combo was not 0.  Roots may not be calculated correctly");
 
                 ReadValue(dRatio, currentLine);
                 parameters.SetRootRatio(ecoregion, species, dRatio.Value, idxval);

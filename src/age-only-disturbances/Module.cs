@@ -11,19 +11,19 @@ namespace Landis.Extension.Succession.ForC.AgeOnlyDisturbances
     /// </summary>
     public static class Module
     {
-        private static IParameterDataset parameters;
+        //private static IParameterDataset parameters;
 
         //---------------------------------------------------------------------
 
         /// <summary>
         /// The collection of biomass parameters for age-only disturbances.
         /// </summary>
-        internal static IParameterDataset Parameters
-        {
-            get {
-                return parameters;
-            }
-        }
+        //internal static IParameterDataset Parameters
+        //{
+        //    get {
+        //        return parameters;
+        //    }
+        //}
 
         //---------------------------------------------------------------------
 
