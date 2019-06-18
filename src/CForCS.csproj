@@ -25,6 +25,10 @@
     <FileVersion>7.0.0.0</FileVersion>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>bin\Debug</OutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Landis.Core" Version="2.0.0" />
   </ItemGroup>
@@ -52,5 +56,9 @@
       <HintPath>lib\Landis.Library.Succession-v6.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy C:\Users\s.#beukema\Projects\Landis\Extension-ForCS-Succession-master\Extension-ForCS-Succession-master\src\bin\Debug\netstandard2.0\$(TargetName).* &quot;C:\Program Files\LANDIS-II-v7\extensions&quot;" />
+  </Target>
   
 </Project>
