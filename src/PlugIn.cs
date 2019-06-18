@@ -7,7 +7,7 @@ using Landis.Library.InitialCommunities;
 using Landis.Library.BiomassCohorts;
 using System.Collections.Generic;
 using Landis.Utilities;
-using System.Diagnostics;       //temporary - for memory testing SEPT
+//using System;                   //temporary - for debugging using VS2017
 
 namespace Landis.Extension.Succession.ForC
 {
@@ -39,12 +39,7 @@ namespace Landis.Extension.Succession.ForC
         {
 
             modelCore = mCore;
-
-            Process currentProcess = System.Diagnostics.Process.GetCurrentProcess();  //temporary - for memory testing SEPT
-            double totalMBOfPhysicalMemory = currentProcess.WorkingSet64 / 100000.0;
-            double totalMBOfVirtualMemory = currentProcess.VirtualMemorySize64 / 100000.0;
-            //modelCore.Log.WriteLine("Before Initial Physical, Virtual Memory Use: " + totalMBOfPhysicalMemory.ToString() + ", " + totalMBOfVirtualMemory.ToString());
-         
+     
             InputParametersParser parser = new InputParametersParser();
             parameters = Landis.Data.Load<IInputParameters>(dataFile, parser);
             InputClimateParser parser3 = new InputClimateParser();
@@ -63,9 +58,6 @@ namespace Landis.Extension.Succession.ForC
             }
 
             SiteVars.Initialize(parameters);
-            totalMBOfPhysicalMemory = currentProcess.WorkingSet64 / 100000.0;
-            totalMBOfVirtualMemory = currentProcess.VirtualMemorySize64 / 100000.0;
-            //modelCore.Log.WriteLine("After Initial Physical, Virtual Memory Use: " + totalMBOfPhysicalMemory.ToString() + ", " + totalMBOfVirtualMemory.ToString());
         }
 
         //---------------------------------------------------------------------
@@ -77,25 +69,15 @@ namespace Landis.Extension.Succession.ForC
                 return modelCore;
             }
         }
-        //---------------------------------------------------------------------
-
-        //public static int SuccessionTimeStep
-        //{
-        //    get
-        //    {
-        //        return time;
-        //    }
-        //}
-
-        //---------------------------------------------------------------------
-
+       
         public override void Initialize()
         {
             Timestep              = parameters.Timestep;
             sufficientLight       = parameters.LightClassProbabilities;
-            
+
             //SiteVars.Initialize();
-            
+            //Console.ReadLine();     //temporary line for debugging in VS2017
+
             //  Initialize climate.  A list of ecoregion indices is passed so that
             //  the climate library can operate independently of the LANDIS-II core.
             List<int> ecoregionIndices = new List<int>();
@@ -128,16 +110,7 @@ namespace Landis.Extension.Succession.ForC
             Cohort.DeathEvent += CohortDied;
             AgeOnlyDisturbances.Module.Initialize();
 
-            Process currentProcess = System.Diagnostics.Process.GetCurrentProcess();  //temporary - for memory testing SEPT
-            double totalMBOfPhysicalMemory = currentProcess.WorkingSet64 / 100000.0;
-            double totalMBOfVirtualMemory = currentProcess.VirtualMemorySize64 / 100000.0;
-            //modelCore.Log.WriteLine("Before Initial Sites Physical, Virtual Memory Use: " + totalMBOfPhysicalMemory.ToString() + ", " + totalMBOfVirtualMemory.ToString());
-
             InitializeSites(parameters.InitialCommunities, parameters.InitialCommunitiesMap, modelCore);
-
-            totalMBOfPhysicalMemory = currentProcess.WorkingSet64 / 100000.0;
-            totalMBOfVirtualMemory = currentProcess.VirtualMemorySize64 / 100000.0;
-            //modelCore.Log.WriteLine("After Initial Sites Physical, Virtual Memory Use: " + totalMBOfPhysicalMemory.ToString() + ", " + totalMBOfVirtualMemory.ToString());
         }
 
         //---------------------------------------------------------------------
@@ -196,11 +169,9 @@ namespace Landis.Extension.Succession.ForC
             double foliar = (double) cohort.ComputeNonWoodyBiomass(site);
             double wood = ((double) cohort.Biomass - foliar);
 
-            //PlugIn.ModelCore.UI.WriteLine("Cohort Died: species={0}, age={1}, biomass={2}, foliage={3}.", cohort.Species.Name, cohort.Age, cohort.Biomass, foliar);
-            
+             
             if (disturbanceType == null) {
-                //PlugIn.ModelCore.UI.WriteLine("NO EVENT: Cohort Died: species={0}, age={1}, disturbance={2}.", cohort.Species.Name, cohort.Age, eventArgs.DisturbanceType);
-
+ 
                 double totalRoot = Roots.CalculateRootBiomass(site, species, cohort.Biomass);
                 
                 SiteVars.soilClass[site].CollectBiomassMortality(species, cohort.Age, wood, foliar, 0);
@@ -208,7 +179,6 @@ namespace Landis.Extension.Succession.ForC
             }
             
             if (disturbanceType != null) {
-                //PlugIn.ModelCore.UI.WriteLine("DISTURBANCE EVENT: Cohort Died: species={0}, age={1}, disturbance={2}.", cohort.Species.Name, cohort.Age, eventArgs.DisturbanceType);
             
                 Disturbed[site] = true;
                 if (disturbanceType.IsMemberOf("disturbance:fire"))
