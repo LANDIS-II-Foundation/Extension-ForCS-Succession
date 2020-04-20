@@ -1,7 +1,7 @@
 ; LANDIS-II Extension infomation
 #define CoreRelease "LANDIS-II-V7"
 #define ExtensionName "ForC Succession"
-#define AppVersion "2.0"
+#define AppVersion "3.0"
 #define AppPublisher "LANDIS-II Foundation"
 #define AppURL "http://www.landis-ii.org/"
 
@@ -69,7 +69,7 @@ Source: {#BuildDir}\Landis.Library.Succession-v6.dll; DestDir: {#ExtDir}; Flags:
 
 ; LANDIS-II identifies the extension with the info in this .txt file
 ; NB. New releases must modify the name of this file and the info in it
-#define InfoTxt "ForCS 2.0.txt"
+#define InfoTxt "ForCS 3.0.txt"
 Source: {#InfoTxt}; DestDir: {#LandisPlugInDir}
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
