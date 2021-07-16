@@ -1,0 +1,74 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyName>Landis.Extension.Succession.ForC-v3.1</AssemblyName>
+    <RootNamespace>Landis.Extension.Succession.ForC</RootNamespace>
+    <ApplicationIcon />
+    <StartupObject />
+    <Version>3.1.0</Version>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy C:\Projects\Landis\GitCode\CForCS\bin\Debug\netcoreapp2.0\$(TargetName).* &quot;C:\Program Files\LANDIS-II-v7\extensions&quot;" />
+  </Target>
+
+  <ItemGroup>
+    <Reference Include="Gdal.Core">
+      <HintPath>..\..\..\..\..\Program Files\LANDIS-II-v7\v7\Gdal.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Core">
+      <HintPath>..\..\..\..\..\Program Files\LANDIS-II-v7\v7\Landis.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.AgeOnlyCohorts-v3">
+      <HintPath>lib\Landis.Library.AgeOnlyCohorts-v3.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.Biomass-v2">
+      <HintPath>lib\Landis.Library.Biomass-v2.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.BiomassCohorts-v3">
+      <HintPath>lib\Landis.Library.BiomassCohorts-v3.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.Cohorts-v2">
+      <HintPath>lib\Landis.Library.Cohorts-v2.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.InitialCommunity-v1">
+      <HintPath>..\..\..\..\..\Program Files\LANDIS-II-v7\extensions\Landis.Library.InitialCommunity-v1.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.Metadata-v2">
+      <HintPath>lib\Landis.Library.Metadata-v2.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.Parameters-v2">
+      <HintPath>lib\Landis.Library.Parameters-v2.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.Succession-v8">
+      <HintPath>..\..\..\..\..\Program Files\LANDIS-II-v7\extensions\Landis.Library.Succession-v8.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.RasterIO">
+      <HintPath>..\..\..\..\..\Program Files\LANDIS-II-v7\v7\Landis.RasterIO.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.RasterIO.Gdal">
+      <HintPath>..\..\..\..\..\Program Files\LANDIS-II-v7\v7\Landis.RasterIO.Gdal.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.SpatialModeling">
+      <HintPath>..\..\..\..\..\Program Files\LANDIS-II-v7\v7\Landis.SpatialModeling.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Utilities">
+      <HintPath>..\..\..\..\..\Program Files\LANDIS-II-v7\v7\Landis.Utilities.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\..\..\..\..\Program Files\LANDIS-II-v7\v7\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Troschuetz.Random">
+      <HintPath>..\..\..\..\..\Program Files\LANDIS-II-v7\v7\Troschuetz.Random.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
