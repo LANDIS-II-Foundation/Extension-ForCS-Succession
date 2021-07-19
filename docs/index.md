@@ -9,6 +9,8 @@ The carbon pools tracked in ForCs and available as outputs (gC/m2) are: woody bi
 
 - [x] The extension allows you considerable flexibility in adjusting disturbance impacts on carbon pools.
 - [x] Users can choose the stand-level model they want to use.
+- [x] New! Version 3.1 is compatible with Biomass Harvest!
+- [x] New! Version 3.1 allows you to tailor carbon transfers to each harvest prescription! 
 
 # Release Notes
 
