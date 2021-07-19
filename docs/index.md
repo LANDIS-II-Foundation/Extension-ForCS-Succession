@@ -25,13 +25,14 @@ To use ForC Succession, you need:
 - The [LANDIS-II model v7.0](http://www.landis-ii.org/install) installed on your computer.
 - Example files (see below)
 
-# Download (includes example files and user guide)
+# Download 
 
 The latest version can be downloaded [here](https://github.com/LANDIS-II-Foundation/Extension-ForCS-Succession/blob/master/deploy/installer/LANDIS-II-V7%20ForC%20Succession%203.1-setup.exe)
+Includes example files and user guide.
 
 # Citation
 
-Dymond, C.C., S. Beukema, C.R. Nitschke, K.D. Coates, & R.M. Scheller 2016. Carbon sequestration in managed temperate coniferous forests under climate change. Biogeosciences 13, 1933-1947.(https://bg.copernicus.org/articles/13/1933/2016/)
+[Dymond, C.C., S. Beukema, C.R. Nitschke, K.D. Coates, & R.M. Scheller 2016. Carbon sequestration in managed temperate coniferous forests under climate change. Biogeosciences 13, 1933-1947.](https://bg.copernicus.org/articles/13/1933/2016/)
 
 # Support
 
@@ -44,4 +45,4 @@ If you come across any issue or suspected bug, please post about it in the [issu
 
 [The LANDIS-II Foundation](http://www.landis-ii.org)
 
-Mail : Caren.Dymond (@) gov.bc.ca
+Mail: Caren.Dymond (@) gov.bc.ca
