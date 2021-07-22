@@ -43,6 +43,6 @@ If you come across any issue or suspected bug, please post about it in the [issu
 
 # Author
 
-[The LANDIS-II Foundation](http://www.landis-ii.org)
+The Government of British Columbia
 
 Mail: Caren.Dymond (@) gov.bc.ca
