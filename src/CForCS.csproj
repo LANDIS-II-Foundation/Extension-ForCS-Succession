@@ -3,11 +3,11 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>Landis.Extension.Succession.ForC-v3.1</AssemblyName>
+    <AssemblyName>Landis.Extension.Succession.ForC-v3.2</AssemblyName>
     <RootNamespace>Landis.Extension.Succession.ForC</RootNamespace>
     <ApplicationIcon />
     <StartupObject />
-    <Version>3.1.2</Version>
+    <Version>3.2.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

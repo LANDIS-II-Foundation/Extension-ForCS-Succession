@@ -223,3 +223,21 @@ testing/v8 Scenario/log_Pools.csv
 testing/v8 Scenario/log_Summary with CC in temp file.xlsx
 testing/v8 Scenario/log_Summary.csv
 testing/v8 Scenario/log_Summary.xlsx
+src/lib/Landis.Library.InitialCommunity.Universal.dll
+src/lib/Landis.Library.Metadata-v2.dll
+src/lib/Landis.Library.Metadata-v2.dll
+src/lib/Landis.Library.Parameters-v2.dll
+src/lib/Landis.Library.Succession-v9.dll
+src/lib/Landis.Library.UniversalCohorts-v1.dll
+src/lib/Landis.Library.Metadata-v2.dll
+src/lib/Landis.Library.Parameters-v2.dll
+/src/obj
+/src/obj/Debug
+/src/obj/Debug/netcoreapp2.0
+src/obj/Debug/netcoreapp2.0/CForCS.AssemblyInfo.cs
+src/obj/Debug/netcoreapp2.0/CForCS.AssemblyInfoInputs.cache
+src/obj/Debug/netcoreapp2.0/CForCS.assets.cache
+src/obj/CForCS.csproj.nuget.g.targets
+src/obj/CForCS.csproj.nuget.g.props
+src/obj/CForCS.csproj.nuget.cache
+/testing/v8 Scenario/Metadata

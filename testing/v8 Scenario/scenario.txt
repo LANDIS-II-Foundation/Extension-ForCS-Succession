@@ -12,7 +12,7 @@ CellLength  100 << meters, so cell area = 1 ha
 
 >> Succession Extension     Initialization File
 >> --------------------     -------------------
-      "ForC Succession"        FORC-successionv3.1simpleroots.txt
+      "ForC Succession"        FORC-successionv3.2simpleroots.txt
 
 
 >> Disturbance Extensions   Initialization File
