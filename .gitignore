@@ -206,3 +206,20 @@ FakesAssemblies/
 
 # Visual Studio 6 workspace options file
 *.opt
+/src/bin
+/src/obj
+/src/obj
+/src/obj
+src/obj/CForCS.csproj.nuget.cache
+/src/Properties
+/testing/v8 Scenario/ForCS
+testing/v8 Scenario/Landis-log.txt
+testing/v8 Scenario/log_BiomassC.csv
+testing/v8 Scenario/log_Flux.csv
+testing/v8 Scenario/log_Flux.xlsx
+testing/v8 Scenario/log_FluxBio.csv
+testing/v8 Scenario/log_FluxDOM.csv
+testing/v8 Scenario/log_Pools.csv
+testing/v8 Scenario/log_Summary with CC in temp file.xlsx
+testing/v8 Scenario/log_Summary.csv
+testing/v8 Scenario/log_Summary.xlsx

@@ -1,6 +1,6 @@
 //  Authors:  Caren Dymond, Sarah Beukema
 
-using Landis.Library.BiomassCohorts;
+using Landis.Library.UniversalCohorts;
 using Landis.Utilities;
 
 namespace Landis.Extension.Succession.ForC.AgeOnlyDisturbances

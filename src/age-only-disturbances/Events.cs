@@ -2,7 +2,7 @@
 
 using Landis.SpatialModeling;
 using Landis.Core;
-using Landis.Library.BiomassCohorts;
+using Landis.Library.UniversalCohorts;
 using System.Collections.Generic;
 using Landis.Utilities;
 
@@ -27,9 +27,9 @@ namespace Landis.Extension.Succession.ForC.AgeOnlyDisturbances
                 return;                                                 //It has already been accounted for, however in PlugIn.CohortDied, so don't repeat here.
 
             double foliar = (double) cohort.ComputeNonWoodyBiomass(site);
-            double wood = ((double) cohort.Biomass - foliar);
+            double wood = ((double) cohort.Data.Biomass - foliar);
             
-            SiteVars.soilClass[site].DisturbanceImpactsBiomass(site, cohort.Species, cohort.Age, wood, foliar, disturbanceType.Name, 0);  
+            SiteVars.soilClass[site].DisturbanceImpactsBiomass(site, cohort.Species, cohort.Data.Age, wood, foliar, disturbanceType.Name, 0);  
         }
 
         //---------------------------------------------------------------------

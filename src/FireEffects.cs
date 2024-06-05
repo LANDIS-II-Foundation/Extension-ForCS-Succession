@@ -3,7 +3,7 @@
 using Landis.Core;
 using Landis.SpatialModeling;
 using Landis.Utilities;
-using Landis.Library.BiomassCohorts;
+using Landis.Library.UniversalCohorts;
 
 using System;
 using System.Collections.Generic;
@@ -20,8 +20,8 @@ namespace Landis.Extension.Succession.ForC
         public static double CrownScorching(ICohort cohort, byte siteSeverity)
         {
 
-            int difference = (int)siteSeverity - cohort.Species.FireTolerance;
-            double ageFraction = 1.0 - ((double)cohort.Age / (double)cohort.Species.Longevity);
+            int difference = (int)siteSeverity - SpeciesData.FireTolerance[cohort.Species];
+            double ageFraction = 1.0 - ((double)cohort.Data.Age / (double)cohort.Species.Longevity);
 
             if (SpeciesData.Epicormic[cohort.Species])
             {

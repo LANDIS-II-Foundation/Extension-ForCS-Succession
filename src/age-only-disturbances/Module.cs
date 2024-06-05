@@ -1,7 +1,7 @@
 //  Copyright 2005-2010 Portland State University, University of Wisconsin
 //  Authors:  Robert M. Scheller, James B. Domingo
 
-using Landis.Library.BiomassCohorts;
+using Landis.Library.UniversalCohorts;
 using System.IO;
 
 namespace Landis.Extension.Succession.ForC.AgeOnlyDisturbances
@@ -37,7 +37,7 @@ namespace Landis.Extension.Succession.ForC.AgeOnlyDisturbances
         public static void Initialize()
         {
             Cohort.AgeOnlyDeathEvent += Events.CohortDied;
-            SiteCohorts.AgeOnlyDisturbanceEvent += Events.SiteDisturbed;
+            SiteCohorts.DisturbanceEvent += Events.SiteDisturbed;
 
 /*            if (filename != null) {
                 PlugIn.ModelCore.UI.WriteLine("Loading biomass parameters for age-only disturbances from file \"{0}\" ...", filename);
