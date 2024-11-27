@@ -39,7 +39,6 @@ namespace Landis.Extension.Succession.ForC
 
         public override void LoadParameters(string dataFile, ICore mCore)
         {
-
             modelCore = mCore;
      
             InputParametersParser parser = new InputParametersParser();
@@ -152,7 +151,7 @@ namespace Landis.Extension.Succession.ForC
         protected override void InitializeSite(ActiveSite site) //, ICommunity initialCommunity)
         {
             InitialBiomass initialBiomass = InitialBiomass.Compute(site, initialCommunity);
-            SiteVars.Cohorts[site] = InitialBiomass.Clone(initialBiomass.Cohorts); 
+            SiteVars.Cohorts[site] = InitialBiomass.Clone(initialBiomass.Cohorts);
 
             // Note: we need this both here and in SiteVars.Initialize()?
             SiteVars.soilClass[site] = new SoilClass(initialBiomass.soilClass);
@@ -323,7 +322,7 @@ namespace Landis.Extension.Succession.ForC
                 */
 
                 preGrowthBiomass = SiteVars.TotalBiomass[site];
-                SiteVars.Cohorts[site].Grow(site, (y == years && isSuccessionTimestep));
+                SiteVars.Cohorts[site].Grow(site, (y == years && isSuccessionTimestep), true);
                 //Debug.Assert(cohorts.TotalBiomass >= 0,"ERROR: total biomass is less than 0");
 
                 SiteVars.soilClass[site].BiomassOutput(site, 0); 
@@ -440,6 +439,7 @@ namespace Landis.Extension.Succession.ForC
         {
             return SiteVars.Cohorts[site].IsMaturePresent(species);
         }
+
         public override void InitializeSites(string initialCommunitiesText, string initialCommunitiesMap, ICore modelCore)
         {
             ModelCore.UI.WriteLine("   Loading initial communities from file \"{0}\" ...", initialCommunitiesText);

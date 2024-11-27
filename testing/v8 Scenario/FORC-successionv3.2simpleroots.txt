@@ -19,11 +19,14 @@ ForCSOutput
 >>  -------     ---------   ----	-------
     1           1           1		1
 
-SoilSpinUp
->>On/Off     Tolerance   Max
->>Flag         %         Iterations
->>-------    ---------   -------
-    0          1.0          20
+MapOutputInterval	1
+
+SpinUp
+>>On/Off      Biomass         Tolerance   Max
+>>Flag        Spin-up           %         Iterations
+>>            Flag  
+>>-------     ------          ---------   -------
+    0          0                1.0          20
 
 AvailableLightBiomass
 >>Shade									

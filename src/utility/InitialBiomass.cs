@@ -6,6 +6,9 @@ using Landis.Library.UniversalCohorts;
 using Landis.Core;
 using System.Collections.Generic;
 using Landis.Library.InitialCommunities.Universal;
+using System;
+using System.Security.Policy;
+using Landis.Library.Succession.DensitySeeding;
 
 namespace Landis.Extension.Succession.ForC
 {
@@ -206,6 +209,46 @@ namespace Landis.Extension.Succession.ForC
             if (ageCohorts.Count == 0)
                 return SiteVars.Cohorts[site];
 
+            if (SoilVars.iParams.BiomassSpinUpFlag == 0)
+            {
+                foreach (var cohort in ageCohorts)
+                {
+                    SiteVars.Cohorts[site].AddNewCohort(cohort.Species, cohort.Data.Age,
+                                                cohort.Data.Biomass, cohort.Data.AdditionalParameters);
+                    SiteVars.TotalBiomass[site] = Library.UniversalCohorts.Cohorts.ComputeNonYoungBiomass(SiteVars.Cohorts[site]);
+                    SiteVars.soilClass[site].CollectBiomassMortality(cohort.Species, 0, 0, 0, 0);      //dummy for getting it to recognize that the species is now present.
+                }
+            }
+            else
+            {
+                SpinUpBiomassCohorts(ageCohorts, site, initialBiomassMethod);
+            }
+
+            if (SoilVars.iParams.SoilSpinUpFlag == 0)
+            {
+                ReadSoilValuesFromTable(site);
+            }
+            else
+            {
+                SiteVars.soilClass[site].SpinupSoils(site);
+            }
+            SiteVars.soilClass[site].LastInitialSoilPass(site);
+            return SiteVars.Cohorts[site];
+        }
+
+        private static void ReadSoilValuesFromTable(ActiveSite site)
+        {
+            IEcoregion ecoregion = PlugIn.ModelCore.Ecoregion[site];
+            foreach (var cohort in SiteVars.Cohorts[site])
+            {
+                SiteVars.soilClass[site].CalculateDecayRates(ecoregion, cohort.Species, site);
+            }
+        }
+
+        private static void SpinUpBiomassCohorts(List<ICohort> ageCohorts,
+                                                     ActiveSite site,
+                                                     ComputeMethod initialBiomassMethod)
+        {
             int indexNextAgeCohort = 0;
             //  The index in the list of sorted age cohorts of the next
             //  cohort to be considered
@@ -240,12 +283,11 @@ namespace Landis.Extension.Succession.ForC
                        ageCohorts[indexNextAgeCohort].Data.Age == -time)
                 {
                     ISpecies species = ageCohorts[indexNextAgeCohort].Species;
-                    
                     int initialBiomass = initialBiomassMethod(species, SiteVars.Cohorts[site], site);
 
                     SiteVars.Cohorts[site].AddNewCohort(ageCohorts[indexNextAgeCohort].Species, 1,
                                                 initialBiomass, new System.Dynamic.ExpandoObject());
-                    SiteVars.soilClass[site].CollectBiomassMortality(species,0, 0, 0, 0);      //dummy for getting it to recognize that the species is now present.
+                    SiteVars.soilClass[site].CollectBiomassMortality(species, 0, 0, 0, 0);      //dummy for getting it to recognize that the species is now present.
 
                     indexNextAgeCohort++;
                 }
@@ -253,7 +295,7 @@ namespace Landis.Extension.Succession.ForC
                 {
                     SiteVars.soilClass[site].lastAge = ageCohorts[0].Data.Age;       //signal both that the spin-up is done, and the oldest age
                     SiteVars.soilClass[site].bKillNow = false;
-                   // PlugIn.ModelCore.UI.WriteLine("InitialBiomass age={0}, site={1}", ageCohorts[0].Age, site);
+                    // PlugIn.ModelCore.UI.WriteLine("InitialBiomass age={0}, site={1}", ageCohorts[0].Age, site);
                 }
                 else if (time == endTime - 1)   //just before the last timestep, we want to send a signal to the growth routine to kill the 
                 {                               //cohorts that need to be snags. Hardwire this first for testing.
@@ -261,10 +303,6 @@ namespace Landis.Extension.Succession.ForC
                 }
 
             }
-
-            SiteVars.soilClass[site].SpinupSoils(site);
-            SiteVars.soilClass[site].LastInitialSoilPass(site);
-            return SiteVars.Cohorts[site];
         }
 
         //---------------------------------------------------------------------

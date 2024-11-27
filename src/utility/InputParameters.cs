@@ -6,6 +6,7 @@ using Landis.Utilities;
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using System;
 
 namespace Landis.Extension.Succession.ForC
 {
@@ -32,6 +33,7 @@ namespace Landis.Extension.Succession.ForC
         private string m_sOutputMapPath;
 
         private int m_nSoilSpinUpFlag;
+        private int m_nBiomassSpinUpFlag;
         private double m_dSpinUpTolerance;
         private int m_nSpinUpIterations;
 
@@ -284,6 +286,7 @@ namespace Landis.Extension.Succession.ForC
         public int OutputMap { get { return m_nOutputMap; } }
 
         public int SoilSpinUpFlag { get { return m_nSoilSpinUpFlag; } }
+        public int BiomassSpinUpFlag { get { return m_nBiomassSpinUpFlag; } }
         public double SpinUpTolerance { get { return m_dSpinUpTolerance; } }
         public int SpinUpIterations { get { return m_nSpinUpIterations; } }
 
@@ -459,6 +462,14 @@ namespace Landis.Extension.Succession.ForC
                 m_nSoilSpinUpFlag = 0;
             else
                 m_nSoilSpinUpFlag = 1;
+        }
+
+        public void SetBiomassSpinUpFlag(InputValue<int> value)
+        {
+            if (value.Actual <= 0)
+                m_nBiomassSpinUpFlag = 0;
+            else
+                m_nBiomassSpinUpFlag = 1;
         }
 
         public void SetTolerance(InputValue<double> newValue)
@@ -906,6 +917,5 @@ namespace Landis.Extension.Succession.ForC
                                               newValue.ToString(), minValue, maxValue);
             return newValue;
         }
-
     }
 }

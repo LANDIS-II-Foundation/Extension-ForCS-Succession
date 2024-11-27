@@ -23,7 +23,7 @@ namespace Landis.Extension.Succession.ForC
             public const string ClimateFile2 = "ForCSClimateFile";
             public const string PnETGroupFile = "PnETfunctionalGroupFile";
             public const string ForCSOutput = "ForCSOutput";
-            public const string SoilSpinUp = "SoilSpinUp";
+            public const string SpinUp = "SpinUp";
             public const string AvailableLightBiomass = "AvailableLightBiomass";
             public const string LightEstablishmentTable = "LightEstablishmentTable";
             public const string SpeciesParameters = "SpeciesParameters";
@@ -221,11 +221,14 @@ namespace Landis.Extension.Succession.ForC
             //GetNextLine();
 
             // SoilSpinUp
-            ReadName(Names.SoilSpinUp);
+            ReadName(Names.SpinUp);
             currentLine = new StringReader(CurrentLine);
             InputVar<int> nSoilSpinFlag = new InputVar<int>("On/Off Flag");
             ReadValue(nSoilSpinFlag, currentLine);
             parameters.SetSoilSpinUpFlag(nSoilSpinFlag.Value);
+            InputVar<int> nBiomassSpinFlag = new InputVar<int>("Biomass Spin-Up Flag");
+            ReadValue(nBiomassSpinFlag, currentLine);
+            parameters.SetBiomassSpinUpFlag(nBiomassSpinFlag.Value);
             InputVar<double> dTolerance = new InputVar<double>("Tolerance");
             ReadValue(dTolerance, currentLine);
             parameters.SetTolerance(dTolerance.Value);

@@ -35,6 +35,7 @@ namespace Landis.Extension.Succession.ForC
         string OutputMapPath { get;  }
 
         int SoilSpinUpFlag { get; }
+        int BiomassSpinUpFlag { get; }
         double SpinUpTolerance { get ; }
         int SpinUpIterations { get ; }
 

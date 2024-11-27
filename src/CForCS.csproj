@@ -16,10 +16,6 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy C:\Projects\Landis\GitCode\CForCS\bin\Debug\netstandard2.0\$(TargetName).* &quot;C:\Program Files\LANDIS-II-v8\extensions&quot;" />
-  </Target>
-
   <ItemGroup>
     <PackageReference Include="Landis.Core" Version="3.0.1" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />

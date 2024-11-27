@@ -80,6 +80,7 @@ namespace Landis.Extension.Succession.ForC
         /// </summary>
         public double ComputeChange(ICohort cohort,
                                  ActiveSite site,
+                                 out double ANPP,
                                  out ExpandoObject otherParams)
          {
             dynamic tempObject = new ExpandoObject();
@@ -119,7 +120,7 @@ namespace Landis.Extension.Succession.ForC
                 throw new ApplicationException("Error: Mortality exceeds cohort biomass");
 
             // Defoliation ranges from 1.0 (total) to none (0.0).
-            defoliation = CohortDefoliation.Compute(site, cohort.Species, cohort.Data.Biomass, siteBiomass);
+            defoliation = CohortDefoliation.Compute(site, cohort, cohort.Data.Biomass, siteBiomass);
             double defoliationLoss = 0.0;
             if (defoliation > 0)
             {
@@ -127,6 +128,8 @@ namespace Landis.Extension.Succession.ForC
                 defoliationLoss = standing_nonwood * defoliation;
                 SiteVars.soilClass[site].DisturbanceImpactsDOM(site, "defol", 0);  //just soil impacts. Dist impacts are handled differently??
             }
+
+            ANPP = actualANPP;
 
             double deltaBiomass = (int)(actualANPP - totalMortality - defoliationLoss);
             double newBiomass = cohort.Data.Biomass + (double)deltaBiomass;
