@@ -19,6 +19,13 @@ ForCSOutput
 >>  -------     ---------   ----	-------
     1           1           1		1
 
+ForCSMapControl
+>>  BiomassC    SDOMC	 NBP	NEP	NPP    RH    ToFPS
+>>  --------    -----    ---	---	---    --    -----
+    1           0        1	0	1      0     0
+ 
+
+
 MapOutputInterval	1
 
 SpinUp
@@ -26,7 +33,7 @@ SpinUp
 >>Flag        Spin-up           %         Iterations
 >>            Flag  
 >>-------     ------          ---------   -------
-    0          0                1.0          20
+    1          1                1.0          20
 
 AvailableLightBiomass
 >>Shade									
@@ -177,18 +184,19 @@ MaxBiomassTimeSeries
 
 
 
- 
+ >>0.1 for 0s
+ >>0.25 for 5's
 EstablishProbabilities
 >>  Yr   Ecoregion   Spp         Prob
 >> ------------------------- ---------------
-0	eco1	pinubank	0.1
-0	eco1	querelli	0.1
-0	eco2	pinubank	0.1
-0	eco2	querelli	0.1
-5	eco1	pinubank	0.25
-5	eco1	querelli	0.25
-5	eco2	pinubank	0.25
-5	eco2	querelli	0.25
+0	eco1	pinubank	0
+0	eco1	querelli	0
+0	eco2	pinubank	0
+0	eco2	querelli	0
+5	eco1	pinubank	0
+5	eco1	querelli	0
+5	eco2	pinubank	0
+5	eco2	querelli	0
 
 RootDynamics
 >> Ecoregion	Species	  	MinB(g/m2)	Root:Shoot	PropFineRt	FRturnover	CRturnover

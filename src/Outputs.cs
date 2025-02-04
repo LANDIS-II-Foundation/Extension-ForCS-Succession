@@ -40,6 +40,35 @@ namespace Landis.Extension.Succession.ForC
 
             for (int j = 0; j < 7; j++)
             {
+                // Skip map outputs if ForCSMapControl table indicates so
+                if (j == 0 && SoilVars.iParams.OutputSDOMC == 0)
+                {
+                    continue;
+                }
+                if (j == 1 && SoilVars.iParams.OutputBiomassC == 0)
+                {
+                    continue;
+                }
+                if (j == 2 && SoilVars.iParams.OutputNPP == 0)
+                {
+                    continue;
+                }
+                if (j == 3 && SoilVars.iParams.OutputNEP == 0)
+                {
+                    continue;
+                }
+                if (j == 4 && SoilVars.iParams.OutputNBP == 0)
+                {
+                    continue;
+                }
+                if (j == 5 && SoilVars.iParams.OutputRH == 0)
+                {
+                    continue;
+                }
+                if (j == 6 && SoilVars.iParams.OutputToFPS == 0)
+                {
+                    continue;
+                }
                 //string path1 = MapNames.ReplaceTemplateVars(@"ForCS\SoilC-{timestep}.img", PlugIn.ModelCore.CurrentTime);
                 string path1 = MapNames.ReplaceTemplateVars(@pathname[j], PlugIn.ModelCore.CurrentTime);
                 using (IOutputRaster<IntPixel> outputRaster = PlugIn.ModelCore.CreateRaster<IntPixel>(path1, PlugIn.ModelCore.Landscape.Dimensions))

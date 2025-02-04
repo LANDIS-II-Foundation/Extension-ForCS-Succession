@@ -241,3 +241,11 @@ src/obj/CForCS.csproj.nuget.g.targets
 src/obj/CForCS.csproj.nuget.g.props
 src/obj/CForCS.csproj.nuget.cache
 /testing/v8 Scenario/Metadata
+/CFORCS 2023
+/ForC Succession example 2021 modified ages
+/src/obj
+testing/v8 Scenario/Summaries/NoSpin/log_Summary.csv
+testing/v8 Scenario/Summaries/Spinup/log_Summary.csv
+src/obj/CForCS.csproj.nuget.g.props
+src/lib/Landis.Library.Metadata-v2.dll
+src/lib/Landis.Library.Parameters-v2.dll
