@@ -16,7 +16,6 @@ namespace Landis.Extension.Succession.ForC
     public static class SiteVars
     {
         private static ISiteVar<SiteCohorts> universalCohorts;
-        private static ISiteVar<ISiteCohorts> universalCohortSiteVar;
 
 
         // Time of last succession simulation:
@@ -62,7 +61,6 @@ namespace Landis.Extension.Succession.ForC
 
             universalCohorts = PlugIn.ModelCore.Landscape.NewSiteVar<SiteCohorts>();
             //ISiteVar<Landis.Library.UniversalCohorts.ISiteCohorts> biomassCohortSiteVar = Landis.Library.Succession.CohortSiteVar<Landis.Library.UniversalCohorts.ISiteCohorts>.Wrap(biomassCohorts);
-            universalCohortSiteVar = Landis.Library.Succession.CohortSiteVar<Landis.Library.UniversalCohorts.ISiteCohorts>.Wrap(universalCohorts);
             
         
             timeOfLast          = PlugIn.ModelCore.Landscape.NewSiteVar<int>();
@@ -100,7 +98,7 @@ namespace Landis.Extension.Succession.ForC
 
             //PlugIn.ModelCore.UI.WriteLine("Before Register " + DateTime.Now.ToString("HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo));
 
-            PlugIn.ModelCore.RegisterSiteVar(universalCohortSiteVar, "Succession.UniversalCohorts");
+            PlugIn.ModelCore.RegisterSiteVar(universalCohorts, "Succession.UniversalCohorts");
             PlugIn.ModelCore.RegisterSiteVar(LitterMass, "Succession.Litter");
             PlugIn.ModelCore.RegisterSiteVar(DeadWoodMass, "Succession.WoodyDebris");
 
