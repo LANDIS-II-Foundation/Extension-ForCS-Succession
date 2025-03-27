@@ -199,13 +199,15 @@ namespace Landis.Extension.Succession.ForC
 
                     Disturbed[site] = true;
                     if (disturbanceType.IsMemberOf("disturbance:fire"))
+                    {
                         Reproduction.CheckForPostFireRegen(eventArgs.Cohort, site);
+                    }
                     else
+                    {
                         Reproduction.CheckForResprouting(eventArgs.Cohort, site);
+                    }
 
-                    if (disturbanceType.IsMemberOf("disturbance:harvest"))  //only do this for harvest. Fire and wind are done in the Events.CohortDied routine.
-                        SiteVars.soilClass[site].DisturbanceImpactsBiomass(site, cohort.Species, cohort.Data.Age, wood, foliar, disturbanceType.Name, 0);
-
+                    SiteVars.soilClass[site].DisturbanceImpactsBiomass(site, cohort.Species, cohort.Data.Age, wood, foliar, disturbanceType.Name, 0);
                 }
             }
             else
