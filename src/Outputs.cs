@@ -30,13 +30,13 @@ namespace Landis.Extension.Succession.ForC
             //pathname[4] = "ForCS/NBP-{timestep}.img";
             //pathname[5] = "ForCS/RH-{timestep}.img";
             //pathname[6] = "ForCS/ToFPS-{timestep}.img";
-            pathname[0] = outpath+"/SoilC-{timestep}.img";
-            pathname[1] = outpath + "/BiomassC-{timestep}.img";
-            pathname[2] = outpath + "/NPP-{timestep}.img";
-            pathname[3] = outpath + "/NEP-{timestep}.img";
-            pathname[4] = outpath + "/NBP-{timestep}.img";
-            pathname[5] = outpath + "/RH-{timestep}.img";
-            pathname[6] = outpath + "/ToFPS-{timestep}.img";
+            pathname[0] = outpath+"/SoilC-{timestep}.tif";
+            pathname[1] = outpath + "/BiomassC-{timestep}.tif";
+            pathname[2] = outpath + "/NPP-{timestep}.tif";
+            pathname[3] = outpath + "/NEP-{timestep}.tif";
+            pathname[4] = outpath + "/NBP-{timestep}.tif";
+            pathname[5] = outpath + "/RH-{timestep}.tif";
+            pathname[6] = outpath + "/ToFPS-{timestep}.tif";
 
             for (int j = 0; j < 7; j++)
             {
