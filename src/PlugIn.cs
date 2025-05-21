@@ -7,7 +7,9 @@ using Landis.Library.InitialCommunities.Universal;
 using Landis.Library.UniversalCohorts;
 using System.Collections.Generic;
 using Landis.Utilities;
-using System;                   //temporary - for debugging using VS2017
+using System;
+using System.ComponentModel;
+using System.Linq;                   //temporary - for debugging using VS2017
 
 namespace Landis.Extension.Succession.ForC
 {
@@ -25,6 +27,7 @@ namespace Landis.Extension.Succession.ForC
         //private static int time;
         public static int MaxLife;
         private ICommunity initialCommunity;
+        private static List<SiteCohortToAdd> siteCohortsToAdd;
 
         private List<ISufficientLight> sufficientLight;
 
@@ -33,6 +36,7 @@ namespace Landis.Extension.Succession.ForC
         public PlugIn()
             : base(ExtensionName)
         {
+            siteCohortsToAdd = new List<SiteCohortToAdd>();
         }
 
         //---------------------------------------------------------------------
@@ -144,6 +148,8 @@ namespace Landis.Extension.Succession.ForC
                 }
             }
 
+            // Clear list of cohorts to add after growth phase for later
+            siteCohortsToAdd.Clear();
         }
 
         //---------------------------------------------------------------------
@@ -271,16 +277,19 @@ namespace Landis.Extension.Succession.ForC
         //---------------------------------------------------------------------
 
         /// <summary>
-        /// Add a new cohort to a site.
+        /// Add a new cohort to a site. Cohort will not be officially added to site until after growth phase
         /// This is a Delegate method to base succession.
         /// </summary>
 
         public void AddNewCohort(ISpecies species, ActiveSite site, string reproductionType, double propBiomass = 1.0)
         {
-            SiteVars.Cohorts[site].AddNewCohort(species, 1, CohortBiomass.InitialBiomass(species, SiteVars.Cohorts[site], site), new System.Dynamic.ExpandoObject());
+            int newBiomass = CohortBiomass.InitialBiomass(species, SiteVars.Cohorts[site], site);
+
+            // Cohorts will be officially added after growth phase
+            siteCohortsToAdd.Add(new SiteCohortToAdd(site, species, newBiomass));
 
             //PlugIn.ModelCore.UI.WriteLine("Added new cohort: Yr={0},  Site={1}, Species={2}, Type={3}", PlugIn.ModelCore.CurrentTime, site, species.Index, reproductionType);
- 
+
         }
 
         //---------------------------------------------------------------------
@@ -327,13 +336,31 @@ namespace Landis.Extension.Succession.ForC
                 SiteVars.Cohorts[site].Grow(site, (y == years && isSuccessionTimestep), true);
                 //Debug.Assert(cohorts.TotalBiomass >= 0,"ERROR: total biomass is less than 0");
 
-                SiteVars.soilClass[site].BiomassOutput(site, 0); 
+                AddNewCohortsPostGrowth(site);
+
+                SiteVars.soilClass[site].BiomassOutput(site, 0);
                 //update total biomass, before sending this to the soil routines.
                 SiteVars.TotalBiomass[site] = Library.UniversalCohorts.Cohorts.ComputeNonYoungBiomass(SiteVars.Cohorts[site]);
                 SiteVars.soilClass[site].ProcessSoils(site, SiteVars.TotalBiomass[site], preGrowthBiomass, 0);
             }
             
         }
+
+        private static void AddNewCohortsPostGrowth(ActiveSite site)
+        {
+            var toAdd = siteCohortsToAdd.Where(x => x.site == site).ToList();
+            // Add the cohorts
+            foreach (var cohort in toAdd)
+            {
+                int newBiomass = CohortBiomass.InitialBiomass(cohort.species, SiteVars.Cohorts[site], site);
+                SiteVars.Cohorts[site].AddNewCohort(cohort.species, 1, newBiomass, new System.Dynamic.ExpandoObject());
+                SiteVars.soilClass[site].CollectBiomassMortality(cohort.species, 0, 0, 0, 0);
+
+                double TotalRoots = Roots.CalculateRootBiomass(site, cohort.species, newBiomass);
+                SiteVars.soilClass[site].CollectRootBiomass(TotalRoots, 1);
+            }
+        }
+
         //---------------------------------------------------------------------
         /// <summary>
         /// Determines if there is sufficient light at a site for a species to
