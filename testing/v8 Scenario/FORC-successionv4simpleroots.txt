@@ -189,14 +189,14 @@ MaxBiomassTimeSeries
 EstablishProbabilities
 >>  Yr   Ecoregion   Spp         Prob
 >> ------------------------- ---------------
-0	eco1	pinubank	0
-0	eco1	querelli	0
-0	eco2	pinubank	0
-0	eco2	querelli	0
-5	eco1	pinubank	0
-5	eco1	querelli	0
-5	eco2	pinubank	0
-5	eco2	querelli	0
+0	eco1	pinubank	0.25
+0	eco1	querelli	0.25
+0	eco2	pinubank	0.25
+0	eco2	querelli	0.25
+5	eco1	pinubank	0.25
+5	eco1	querelli	0.25
+5	eco2	pinubank	0.25
+5	eco2	querelli	0.25
 
 RootDynamics
 >> Ecoregion	Species	  	MinB(g/m2)	Root:Shoot	PropFineRt	FRturnover	CRturnover
