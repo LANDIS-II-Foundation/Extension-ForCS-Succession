@@ -23,7 +23,8 @@ namespace Landis.Extension.Succession.ForC
             public const string ClimateFile2 = "ForCSClimateFile";
             public const string PnETGroupFile = "PnETfunctionalGroupFile";
             public const string ForCSOutput = "ForCSOutput";
-            public const string SoilSpinUp = "SoilSpinUp";
+            public const string ForCSMapControl = "ForCSMapControl";
+            public const string SpinUp = "SpinUp";
             public const string AvailableLightBiomass = "AvailableLightBiomass";
             public const string LightEstablishmentTable = "LightEstablishmentTable";
             public const string SpeciesParameters = "SpeciesParameters";
@@ -195,6 +196,33 @@ namespace Landis.Extension.Succession.ForC
             ReadValue(nOutputSummary, currentLine);
             parameters.SetOutputSummary(nOutputSummary.Value);
 
+            GetNextLine();
+
+            // ForCSMapControl
+            ReadName(Names.ForCSMapControl);
+            currentLine = new StringReader(CurrentLine);
+            InputVar<int> nOutputBiomassC = new InputVar<int>("BiomassC");
+            ReadValue(nOutputBiomassC, currentLine);
+            parameters.SetOutputBiomassC(nOutputBiomassC.Value);
+            InputVar<int> nOutputSDOMC = new InputVar<int>("SDOMC");
+            ReadValue(nOutputSDOMC, currentLine);
+            parameters.SetOutputSDOMC(nOutputSDOMC.Value);
+            InputVar<int> nOutputNBP = new InputVar<int>("NBP");
+            ReadValue(nOutputNBP, currentLine);
+            parameters.SetOutputNBP(nOutputNBP.Value);
+            InputVar<int> nOutputNEP = new InputVar<int>("NEP");
+            ReadValue(nOutputNEP, currentLine);
+            parameters.SetOutputNEP(nOutputNEP.Value);
+            InputVar<int> nOutputNPP = new InputVar<int>("NPP");
+            ReadValue(nOutputNPP, currentLine);
+            parameters.SetOutputNPP(nOutputNPP.Value);
+            InputVar<int> nOutputRH = new InputVar<int>("RH");
+            ReadValue(nOutputRH, currentLine);
+            parameters.SetOutputRH(nOutputRH.Value);
+            InputVar<int> nOutputToFPS = new InputVar<int>("ToFPS");
+            ReadValue(nOutputToFPS, currentLine);
+            parameters.SetOutputToFPS(nOutputToFPS.Value);
+
             //PlugIn.ModelCore.UI.WriteLine("Intervals so far {0}, {1}, {2}, {3}", parameters.OutputBiomass, parameters.OutputDOMPools, parameters.OutputFlux, parameters.OutputSummary );
             GetNextLine();
 
@@ -221,11 +249,14 @@ namespace Landis.Extension.Succession.ForC
             //GetNextLine();
 
             // SoilSpinUp
-            ReadName(Names.SoilSpinUp);
+            ReadName(Names.SpinUp);
             currentLine = new StringReader(CurrentLine);
             InputVar<int> nSoilSpinFlag = new InputVar<int>("On/Off Flag");
             ReadValue(nSoilSpinFlag, currentLine);
             parameters.SetSoilSpinUpFlag(nSoilSpinFlag.Value);
+            InputVar<int> nBiomassSpinFlag = new InputVar<int>("Biomass Spin-Up Flag");
+            ReadValue(nBiomassSpinFlag, currentLine);
+            parameters.SetBiomassSpinUpFlag(nBiomassSpinFlag.Value);
             InputVar<double> dTolerance = new InputVar<double>("Tolerance");
             ReadValue(dTolerance, currentLine);
             parameters.SetTolerance(dTolerance.Value);

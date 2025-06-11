@@ -16,13 +16,13 @@ namespace Landis.Extension.Succession.ForC
     public interface IInputParameters
     //    : Dynamic.IParameters
     {
-        int Timestep { get; set;}
-        SeedingAlgorithms SeedAlgorithm { get;set;}
+        int Timestep { get; set; }
+        SeedingAlgorithms SeedAlgorithm { get; set; }
         string InitialCommunities { get; set; }
         string InitialCommunitiesMap { get; set; }
         bool CalibrateMode { get; set; }
-        double SpinupMortalityFraction { get; set;}
-        string ClimateFile { get;set;}
+        double SpinupMortalityFraction { get; set; }
+        string ClimateFile { get; set; }
         string ClimateFile2 { get; set; }
         string InitSnagFile { get; set; }
         string DMFile { get; set; }
@@ -32,9 +32,18 @@ namespace Landis.Extension.Succession.ForC
         int OutputFlux { get; }
         int OutputSummary { get; }
         int OutputMap { get; }
-        string OutputMapPath { get;  }
+        string OutputMapPath { get; }
+
+        int OutputBiomassC {  get; }
+        int OutputSDOMC { get; }
+        int OutputNBP { get; }
+        int OutputNEP { get; }
+        int OutputNPP { get; }
+        int OutputRH {  get; }
+        int OutputToFPS { get; }
 
         int SoilSpinUpFlag { get; }
+        int BiomassSpinUpFlag { get; }
         double SpinUpTolerance { get ; }
         int SpinUpIterations { get ; }
 

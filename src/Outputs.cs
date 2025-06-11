@@ -30,16 +30,45 @@ namespace Landis.Extension.Succession.ForC
             //pathname[4] = "ForCS/NBP-{timestep}.img";
             //pathname[5] = "ForCS/RH-{timestep}.img";
             //pathname[6] = "ForCS/ToFPS-{timestep}.img";
-            pathname[0] = outpath+"/SoilC-{timestep}.img";
-            pathname[1] = outpath + "/BiomassC-{timestep}.img";
-            pathname[2] = outpath + "/NPP-{timestep}.img";
-            pathname[3] = outpath + "/NEP-{timestep}.img";
-            pathname[4] = outpath + "/NBP-{timestep}.img";
-            pathname[5] = outpath + "/RH-{timestep}.img";
-            pathname[6] = outpath + "/ToFPS-{timestep}.img";
+            pathname[0] = outpath+"/SoilC-{timestep}.tif";
+            pathname[1] = outpath + "/BiomassC-{timestep}.tif";
+            pathname[2] = outpath + "/NPP-{timestep}.tif";
+            pathname[3] = outpath + "/NEP-{timestep}.tif";
+            pathname[4] = outpath + "/NBP-{timestep}.tif";
+            pathname[5] = outpath + "/RH-{timestep}.tif";
+            pathname[6] = outpath + "/ToFPS-{timestep}.tif";
 
             for (int j = 0; j < 7; j++)
             {
+                // Skip map outputs if ForCSMapControl table indicates so
+                if (j == 0 && SoilVars.iParams.OutputSDOMC == 0)
+                {
+                    continue;
+                }
+                if (j == 1 && SoilVars.iParams.OutputBiomassC == 0)
+                {
+                    continue;
+                }
+                if (j == 2 && SoilVars.iParams.OutputNPP == 0)
+                {
+                    continue;
+                }
+                if (j == 3 && SoilVars.iParams.OutputNEP == 0)
+                {
+                    continue;
+                }
+                if (j == 4 && SoilVars.iParams.OutputNBP == 0)
+                {
+                    continue;
+                }
+                if (j == 5 && SoilVars.iParams.OutputRH == 0)
+                {
+                    continue;
+                }
+                if (j == 6 && SoilVars.iParams.OutputToFPS == 0)
+                {
+                    continue;
+                }
                 //string path1 = MapNames.ReplaceTemplateVars(@"ForCS\SoilC-{timestep}.img", PlugIn.ModelCore.CurrentTime);
                 string path1 = MapNames.ReplaceTemplateVars(@pathname[j], PlugIn.ModelCore.CurrentTime);
                 using (IOutputRaster<IntPixel> outputRaster = PlugIn.ModelCore.CreateRaster<IntPixel>(path1, PlugIn.ModelCore.Landscape.Dimensions))

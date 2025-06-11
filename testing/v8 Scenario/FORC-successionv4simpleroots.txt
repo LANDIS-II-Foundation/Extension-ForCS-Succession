@@ -19,11 +19,21 @@ ForCSOutput
 >>  -------     ---------   ----	-------
     1           1           1		1
 
-SoilSpinUp
->>On/Off     Tolerance   Max
->>Flag         %         Iterations
->>-------    ---------   -------
-    0          1.0          20
+ForCSMapControl
+>>  BiomassC    SDOMC	 NBP	NEP	NPP    RH    ToFPS
+>>  --------    -----    ---	---	---    --    -----
+    1           1        1	1	1      1     1
+ 
+
+
+MapOutputInterval	1
+
+SpinUp
+>>On/Off      Biomass         Tolerance   Max
+>>Flag        Spin-up           %         Iterations
+>>            Flag  
+>>-------     ------          ---------   -------
+    1          1                1.0          20
 
 AvailableLightBiomass
 >>Shade									
@@ -174,14 +184,15 @@ MaxBiomassTimeSeries
 
 
 
- 
+ >>0.1 for 0s
+ >>0.25 for 5's
 EstablishProbabilities
 >>  Yr   Ecoregion   Spp         Prob
 >> ------------------------- ---------------
-0	eco1	pinubank	0.1
-0	eco1	querelli	0.1
-0	eco2	pinubank	0.1
-0	eco2	querelli	0.1
+0	eco1	pinubank	0.25
+0	eco1	querelli	0.25
+0	eco2	pinubank	0.25
+0	eco2	querelli	0.25
 5	eco1	pinubank	0.25
 5	eco1	querelli	0.25
 5	eco2	pinubank	0.25

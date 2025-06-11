@@ -6,6 +6,7 @@ using Landis.Utilities;
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using System;
 
 namespace Landis.Extension.Succession.ForC
 {
@@ -31,7 +32,16 @@ namespace Landis.Extension.Succession.ForC
         private int m_nOutputMap = 0;
         private string m_sOutputMapPath;
 
+        private int m_nOutputBiomassC;
+        private int m_nOutputSDOMC;
+        private int m_nOutputNBP;
+        private int m_nOutputNEP;
+        private int m_nOutputNPP;
+        private int m_nOutputRH;
+        private int m_nOutputToFPS;
+
         private int m_nSoilSpinUpFlag;
+        private int m_nBiomassSpinUpFlag;
         private double m_dSpinUpTolerance;
         private int m_nSpinUpIterations;
 
@@ -283,7 +293,17 @@ namespace Landis.Extension.Succession.ForC
         public int OutputSummary { get { return m_nOutputSummary; } }
         public int OutputMap { get { return m_nOutputMap; } }
 
+        public int OutputBiomassC { get { return m_nOutputBiomassC; } }
+        public int OutputSDOMC { get { return m_nOutputSDOMC; } }
+        public int OutputNBP { get { return m_nOutputNBP; } }
+        public int OutputNEP { get { return m_nOutputNEP; } }
+        public int OutputNPP { get { return m_nOutputNPP; } }
+        public int OutputRH { get { return m_nOutputRH; } }
+        public int OutputToFPS { get { return m_nOutputToFPS; } }
+
+
         public int SoilSpinUpFlag { get { return m_nSoilSpinUpFlag; } }
+        public int BiomassSpinUpFlag { get { return m_nBiomassSpinUpFlag; } }
         public double SpinUpTolerance { get { return m_dSpinUpTolerance; } }
         public int SpinUpIterations { get { return m_nSpinUpIterations; } }
 
@@ -459,6 +479,14 @@ namespace Landis.Extension.Succession.ForC
                 m_nSoilSpinUpFlag = 0;
             else
                 m_nSoilSpinUpFlag = 1;
+        }
+
+        public void SetBiomassSpinUpFlag(InputValue<int> value)
+        {
+            if (value.Actual <= 0)
+                m_nBiomassSpinUpFlag = 0;
+            else
+                m_nBiomassSpinUpFlag = 1;
         }
 
         public void SetTolerance(InputValue<double> newValue)
@@ -907,5 +935,74 @@ namespace Landis.Extension.Succession.ForC
             return newValue;
         }
 
+        internal void SetOutputBiomassC(InputValue<int> newValue)
+        {
+            System.Diagnostics.Debug.Assert(newValue != null);
+
+            if (newValue.Actual < 0)
+                throw new InputValueException(newValue.String, "{0} must not be less than 0.", newValue.String);
+
+            m_nOutputBiomassC = newValue.Actual;
+        }
+
+        internal void SetOutputSDOMC(InputValue<int> newValue)
+        {
+            System.Diagnostics.Debug.Assert(newValue != null);
+
+            if (newValue.Actual < 0)
+                throw new InputValueException(newValue.String, "{0} must not be less than 0.", newValue.String);
+
+            m_nOutputSDOMC = newValue.Actual;
+        }
+
+        internal void SetOutputNBP(InputValue<int> newValue)
+        {
+            System.Diagnostics.Debug.Assert(newValue != null);
+
+            if (newValue.Actual < 0)
+                throw new InputValueException(newValue.String, "{0} must not be less than 0.", newValue.String);
+
+            m_nOutputNBP = newValue.Actual;
+        }
+
+        internal void SetOutputNEP(InputValue<int> newValue)
+        {
+            System.Diagnostics.Debug.Assert(newValue != null);
+
+            if (newValue.Actual < 0)
+                throw new InputValueException(newValue.String, "{0} must not be less than 0.", newValue.String);
+
+            m_nOutputNEP = newValue.Actual;
+        }
+
+        internal void SetOutputNPP(InputValue<int> newValue)
+        {
+            System.Diagnostics.Debug.Assert(newValue != null);
+
+            if (newValue.Actual < 0)
+                throw new InputValueException(newValue.String, "{0} must not be less than 0.", newValue.String);
+
+            m_nOutputNPP = newValue.Actual;
+        }
+
+        internal void SetOutputRH(InputValue<int> newValue)
+        {
+            System.Diagnostics.Debug.Assert(newValue != null);
+
+            if (newValue.Actual < 0)
+                throw new InputValueException(newValue.String, "{0} must not be less than 0.", newValue.String);
+
+            m_nOutputRH = newValue.Actual;
+        }
+
+        internal void SetOutputToFPS(InputValue<int> newValue)
+        {
+            System.Diagnostics.Debug.Assert(newValue != null);
+
+            if (newValue.Actual < 0)
+                throw new InputValueException(newValue.String, "{0} must not be less than 0.", newValue.String);
+
+            m_nOutputToFPS = newValue.Actual;
+        }
     }
 }
