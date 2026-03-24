@@ -1,7 +1,7 @@
 LandisData   Extension
 
 Name         "ForC Succession"
-Version      4.0.2
+Version      4.1
 Type         succession
 Assembly     Landis.Extension.Succession.ForC-v4
 Class        Landis.Extension.Succession.ForC.PlugIn
