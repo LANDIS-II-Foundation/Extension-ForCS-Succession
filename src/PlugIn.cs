@@ -184,7 +184,7 @@ namespace Landis.Extension.Succession.ForC
             double foliar = (double)cohort.ComputeNonWoodyBiomass(site);
             double wood = ((double)cohort.Data.Biomass - foliar);
 
-            if (eventArgs.Reduction >= 1)
+            if (eventArgs.FractionBiomassReduction >= 1)
             {
                 if (disturbanceType == null)
                 {
@@ -216,8 +216,8 @@ namespace Landis.Extension.Succession.ForC
             }
             else
             {
-                float mortality = eventArgs.Reduction;
-                float fractionPartialMortality = mortality / (float)cohort.Data.Biomass;
+                double mortality = eventArgs.FractionBiomassReduction;
+                double fractionPartialMortality = mortality / (double)cohort.Data.Biomass;
                 double foliarInput = foliar * fractionPartialMortality;
                 double woodInput = wood * fractionPartialMortality;
                 //PlugIn.ModelCore.UI.WriteLine("Inputs:  {0}, {1}, {2}, {3}", fractionPartialMortality, foliar, woodInput, foliarInput);
