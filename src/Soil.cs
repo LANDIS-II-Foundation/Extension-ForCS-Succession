@@ -725,12 +725,13 @@ namespace Landis.Extension.Succession.ForC
             {
                 if (tmpFireSeverity == 0)   //usual case
                 {
-                    System.Diagnostics.Debug.Assert(SiteVars.FireSeverity != null);
+                    if (SiteVars.FireSeverity == null)
+                        SiteVars.FireSeverity = PlugIn.ModelCore.GetSiteVar<byte>("Fire.Severity");
+                    if (SiteVars.FireSeverity == null)
+                        return;  // no fire extension loaded; nothing to do
                     severity = SiteVars.FireSeverity[site];
                     if (severity == 0)
-                        SiteVars.FireSeverity = PlugIn.ModelCore.GetSiteVar<byte>("Fire.Severity");
-                    if (severity == 0)
-                        return;     //no impacts from a fire severity = 0
+                        return;
                 }
                 else
                 {   //called during spin-up
