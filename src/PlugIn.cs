@@ -216,8 +216,10 @@ namespace Landis.Extension.Succession.ForC
             }
             else
             {
-                double mortality = eventArgs.FractionBiomassReduction;
-                double fractionPartialMortality = mortality / (double)cohort.Data.Biomass;
+                // FractionBiomassReduction is already a fraction of the cohort's
+                // biomass (UCL raises the event before ChangeBiomass), so it must
+                // not be divided by biomass again.
+                double fractionPartialMortality = eventArgs.FractionBiomassReduction;
                 double foliarInput = foliar * fractionPartialMortality;
                 double woodInput = wood * fractionPartialMortality;
                 //PlugIn.ModelCore.UI.WriteLine("Inputs:  {0}, {1}, {2}, {3}", fractionPartialMortality, foliar, woodInput, foliarInput);
