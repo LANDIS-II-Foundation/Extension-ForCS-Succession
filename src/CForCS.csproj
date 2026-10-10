@@ -7,9 +7,9 @@
     <RootNamespace>Landis.Extension.Succession.ForC</RootNamespace>
     <ApplicationIcon />
     <StartupObject />
-    <Version>4.1</Version>
-    <AssemblyVersion>4.1</AssemblyVersion>
-    <FileVersion>4.1</FileVersion>
+    <Version>4.1.1</Version>
+    <AssemblyVersion>4.1.1</AssemblyVersion>
+    <FileVersion>4.1.1</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
