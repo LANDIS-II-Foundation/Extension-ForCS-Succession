@@ -380,7 +380,7 @@ namespace Landis.Extension.Succession.ForC
             InputVar<double> dPropNonMerch = new InputVar<double>("Proportion Non-Merchantible");
             InputVar<double> growthCurveShapeParm = new InputVar<double>("Growth Curve Shape Parameter");
             
-            string lastColumn = "the " + mbm.Name + " column";
+            string lastColumn = "the " + fireTolerance.Name + " column";
 
             nread = 0;
             //while (!AtEndOfInput && (CurrentName != Names.AgeOnlyDisturbanceParms))
@@ -412,8 +412,14 @@ namespace Landis.Extension.Succession.ForC
                 ReadValue(shadeTolerance, currentLine);
                 parameters.SetShadeTolerance(species, shadeTolerance.Value);
 
-                ReadValue(fireTolerance, currentLine);
-                parameters.SetFireTolerance(species, fireTolerance.Value);
+                // Fire Tolerance (the last column) is optional: ForCS does not use it, because
+                // the fire extension decides which cohorts die. Rows with or without it parse.
+                TextReader.SkipWhitespace(currentLine);
+                if (currentLine.Peek() != -1)
+                {
+                    ReadValue(fireTolerance, currentLine);
+                    parameters.SetFireTolerance(species, fireTolerance.Value);
+                }
 
                 nread += 1;
 

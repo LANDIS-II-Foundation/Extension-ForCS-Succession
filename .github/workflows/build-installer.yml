@@ -1,0 +1,76 @@
+# Build the Windows installer for ForC Succession with Inno Setup.
+#
+# Run it by hand from the Actions tab ("Run workflow"). It also runs on pull requests that
+# change the extension's source or installer files, so a PR shows that the installer still
+# builds. The installer, the DLLs it bundles and their checksums are uploaded as the
+# "forc-installer" artifact; committing the installer to deploy/installer/ stays a
+# maintainer's step.
+name: Build Windows installer
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "src/**"
+      - "deploy/installer/**"
+      - ".github/workflows/build-installer.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  installer:
+    # The Windows Server 2022 image includes Inno Setup 6 and the .NET 8 SDK.
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Download the support libraries
+        working-directory: src/lib
+        run: |
+          ./support_libs_download.ps1
+          # the script reports a failed download but does not fail, so check every file
+          $dlls = "Landis.Library.Metadata-v2.dll", "Landis.Library.UniversalCohorts-v2.dll",
+            "Landis.Library.Succession-v10.dll", "Landis.Library.Parameters-v2.dll",
+            "Landis.Library.InitialCommunity.Universal-v2.dll"
+          foreach ($d in $dlls) {
+            if (-not (Test-Path $d)) { throw "missing $d" }
+          }
+
+      - name: Build the extension
+        working-directory: src
+        run: |
+          # the repository commits stale build state under obj/; start from a clean tree
+          Remove-Item -Recurse -Force obj, bin -ErrorAction SilentlyContinue
+          dotnet build CForCS.csproj -c Release
+          if ($LASTEXITCODE -ne 0) { throw "dotnet build failed" }
+
+      - name: Build the installer
+        run: |
+          $iss = @(Get-ChildItem deploy/installer/*.iss)
+          if ($iss.Count -ne 1) { throw "expected one .iss in deploy/installer, found $($iss.Count)" }
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { $iscc = (Get-Command iscc -ErrorAction Stop).Source }
+          # write to a fresh folder: deploy/installer/ also holds earlier, committed installers
+          $out = Join-Path $env:RUNNER_TEMP "installer"
+          & $iscc "/O$out" $iss[0].FullName
+          if ($LASTEXITCODE -ne 0) { throw "ISCC failed" }
+          Copy-Item src/bin/Release/netstandard2.0/*.dll $out
+
+      - name: List versions and checksums
+        run: |
+          $out = Join-Path $env:RUNNER_TEMP "installer"
+          Get-ChildItem $out -File | ForEach-Object {
+            $v = $_.VersionInfo
+            "{0}  {1}  file {2}  product {3}" -f (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower(),
+              $_.Name, $v.FileVersion, $v.ProductVersion
+          } | Tee-Object -FilePath (Join-Path $out "SHA256SUMS.txt")
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: forc-installer
+          path: ${{ runner.temp }}/installer
+          if-no-files-found: error
