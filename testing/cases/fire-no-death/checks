@@ -1,0 +1,3 @@
+# Fire burns every cell but kills no cohort; the fire's DOM rows still act (#9).
+FluxBio_records 1 == 0
+FluxDOM_records 1 > 0

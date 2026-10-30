@@ -8,14 +8,16 @@
 ##   inputs/     the scenario's input files, or a file `source` naming an input directory
 ##               relative to the repository root (e.g. testing/v8 Scenario);
 ##   scenario    optional; the name of the scenario file (default scenario.txt);
-##   expected/   totals.csv and sha256sums.txt, written by digest.py.
+##   expected/   totals.csv and sha256sums.txt, written by digest.py;
+##   checks      optional; statements about totals.csv that must hold (see check.py).
 ## Each case runs in a fresh copy, testing/work/<name>/ (Docker, 2 CPUs, 4 GB), with the DLL mounted
-## over the image's copy. digest.py then summarises the ForC logs and checks the carbon balance.
-## --update writes the new digests into expected/ instead of comparing them.
+## over the image's copy. digest.py then summarises the ForC logs and checks the carbon balance,
+## and check.py tests the case's checks. --update writes the new digests into expected/ instead
+## of comparing them, but only for a case that passes its balance and its checks.
 set -euo pipefail
 update=0
 if [ "${1:-}" = --update ]; then update=1; shift; fi
-[ $# -ge 2 ] || { sed -n '2,15p' "$0" | sed 's/^## \{0,1\}//'; exit 2; }
+[ $# -ge 2 ] || { sed -n '2,16p' "$0" | sed 's/^## \{0,1\}//'; exit 2; }
 dll=$(cd "$(dirname "$1")" && pwd)/$(basename "$1")
 img=$2
 shift 2
@@ -59,6 +61,13 @@ for c in "${cases[@]}"; do
   if ! python3 -I "$here/digest.py" "$w" "$w/digest" > "$w/digest.log" 2>&1; then
     echo "FAIL $c: digest.py (testing/work/$c/digest.log)"
     sed 's/^/     /' "$w/digest.log" | tail -5
+    failed+=("$c")
+    continue
+  fi
+  if [ -f "$cdir/checks" ] &&
+    ! python3 -I "$here/check.py" "$w/digest/totals.csv" "$cdir/checks" "$here/cases" > "$w/checks.log" 2>&1; then
+    echo "FAIL $c: checks (testing/work/$c/checks.log)"
+    grep -v '^ok' "$w/checks.log" | sed 's/^/     /' | tail -5 || true
     failed+=("$c")
     continue
   fi

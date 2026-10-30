@@ -1,0 +1,5 @@
+# The matrix has no wind rows and no other rows. The killed cohorts' carbon goes to DOM,
+# with a flux record for each (the carbon balance in digest.py fails if it is lost), and no DOM
+# rows act.
+FluxBio_records 1 == case:dom-d-wind
+FluxDOM_records 1 == 0
