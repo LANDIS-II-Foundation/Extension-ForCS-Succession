@@ -65,5 +65,6 @@ The column is one of `totals.csv`'s, and `<op>` is one of `== != > >= < <=`. A v
 | `partial-cut` | Biomass Harvest cutting 30 % of a single cohort (#11) |
 | `spinup-no-fire-dom` | as `dom-a-spinup`, with no fire DOM rows; must differ from `dom-a-spinup` (#9) |
 | `spinup-young` | one cell, a 25-year-old Hw cohort, with Bl listed but absent (#14) |
+| `spinup-young-bl-zero` | as `spinup-young`, with Bl's `AmountT0` at 0; must be identical to `spinup-young` (#14) |
 | `wind-no-rows` | as `dom-d-wind`, with no wind rows in the disturbance matrix; killed biomass goes to DOM |
 | `wind-other-rows` | as `dom-d-wind`, with its wind rows given as `other`; wind uses them |

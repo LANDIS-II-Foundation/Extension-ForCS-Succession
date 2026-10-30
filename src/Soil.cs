@@ -1663,10 +1663,13 @@ namespace Landis.Extension.Succession.ForC
             if (SoilVars.iParams.SoilSpinUpFlag == 0)
                 return;
 
+            //The stop test counts the species present only: an absent species keeps its AmountT0 until the last pass
+            //zeroes it, and counting it would make the change from one cycle to the next look smaller than it is.
             foreach (ISpecies species in PlugIn.ModelCore.Species)
             {
                 idxSpecies = (int)species.Index;
-                initSlowPool += soilC[5, idxSpecies] + soilC[6, idxSpecies];
+                if (SpeciesPresent[idxSpecies])
+                    initSlowPool += soilC[5, idxSpecies] + soilC[6, idxSpecies];
             }
             do
             {
@@ -1706,7 +1709,8 @@ namespace Landis.Extension.Succession.ForC
                 foreach (ISpecies species in PlugIn.ModelCore.Species)
                 {
                     idxSpecies = (int)species.Index;
-                    newSlowPool += soilC[5, idxSpecies] + soilC[6, idxSpecies];
+                    if (SpeciesPresent[idxSpecies])
+                        newSlowPool += soilC[5, idxSpecies] + soilC[6, idxSpecies];
                 }
                 diff = newSlowPool - initSlowPool;
                 prop = 100*diff / initSlowPool;

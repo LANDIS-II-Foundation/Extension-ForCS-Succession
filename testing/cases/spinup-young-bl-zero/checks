@@ -1,0 +1,6 @@
+# As spinup-young, with the absent Bl's AmountT0 set to 0. Bl's pools are zeroed before the run
+# starts, so if the spin-up's stop test counts only the species present, the two runs must be
+# identical (#14).
+TotalDOM 1 == case:spinup-young
+Rh 1 == case:spinup-young
+NBP 1 == case:spinup-young
