@@ -1650,15 +1650,28 @@ namespace Landis.Extension.Succession.ForC
     **********************************************************************************************************************/
         public void SpinupSoils(ActiveSite site)
         {
+            //each cycle is the present stand's age, recorded by the biomass spin-up, and ends with a severity-4 fire
+            SpinupSoils(site, SoilVars.BioInput, SoilVars.BioLive, lastAge, SpinUpDisturbance.Fire4, null);
+        }
+
+        /// <summary>
+        /// The spin-up of an ecoregion with a return interval: the cycles grow the stand recorded by
+        /// InitialBiomass.GrowReturnIntervalStand (its litter inputs by cohort age, and its live biomass at the end).
+        /// </summary>
+        public void SpinupSoils(ActiveSite site, double[,,] inputs, double[,] live, SpinUpReturnInterval returnInterval)
+        {
+            SpinupSoils(site, inputs, live, returnInterval.ReturnInterval, returnInterval.CycleDisturbance, returnInterval.LastDisturbance);
+        }
+
+        private void SpinupSoils(ActiveSite site, double[,,] inputs, double[,] live, int maxage,
+                                 SpinUpDisturbance cycleDisturbance, SpinUpDisturbance lastDisturbance)
+        {
             int idxSpecies;
             int icnt = 0;
-            double wood;
-            double nonwood;
             double initSlowPool = 0.0;
             double newSlowPool = 0.0;
             double diff = 0.0;
             double prop = 0.0;
-            int maxage = lastAge;
 
             if (SoilVars.iParams.SoilSpinUpFlag == 0)
                 return;
@@ -1673,39 +1686,7 @@ namespace Landis.Extension.Succession.ForC
             }
             do
             {
-                for (int iage = 0; iage <= maxage; iage++)
-                {
-                    foreach (ISpecies species in PlugIn.ModelCore.Species)
-                    {
-                        idxSpecies = (int)species.Index;
-                        if (SpeciesPresent[idxSpecies])
-                        {
-                            wood = 0.0;
-                            nonwood = 0.0;
-                            for (int i = 0; i < NUMBIOMASSCOMPONENTS; i++)
-                            {
-                                netCLoss[i, idxSpecies] = SoilVars.BioInput[i, idxSpecies, iage];
-                                if (i == 0)
-                                    wood += SoilVars.BioLive[i, idxSpecies];
-                                else
-                                    nonwood += SoilVars.BioLive[i, idxSpecies];
-                            }
-                            if (iage == maxage)
-                            //simulate the input from a stand-replacing event.
-                            //NOTE: we are assuming a severity 4 fire.
-                            {
-                                DisturbanceImpactsBiomass(site, species, iage, wood / BIOTOC, nonwood / BIOTOC, ":fire", 4);
-                                //DisturbanceImpactsDOM(site, ":fire", 4); //this has a species loop in it and should not be inside of one here
-                            }
-                        }
-                    }
-                    if (iage == maxage)
-                    {
-                        DisturbanceImpactsDOM(site, ":fire", 4);
-                    }
-
-                    ProcessSoils(site, Library.UniversalCohorts.Cohorts.ComputeNonYoungBiomass(SiteVars.Cohorts[site]), 0, -1);
-                }
+                SpinupCycle(site, inputs, live, maxage, cycleDisturbance);
                 foreach (ISpecies species in PlugIn.ModelCore.Species)
                 {
                     idxSpecies = (int)species.Index;
@@ -1724,7 +1705,60 @@ namespace Landis.Extension.Succession.ForC
             //    PlugIn.ModelCore.UI.WriteLine("count exceeded without slow pools converging");
             //   PlugIn.ModelCore.UI.WriteLine("Spinup: cycles={0}", icnt);
 
+            //with a return interval, the stand that preceded the present one grows one more cycle and ends with the
+            //last disturbance; the last soil pass then grows the present stand from it
+            if (lastDisturbance != null)
+            {
+                SpinupCycle(site, inputs, live, maxage, lastDisturbance);
+                PlugIn.ModelCore.UI.WriteLine("Spinup: last cycle, ending with {0}", lastDisturbance);
+            }
+
             return;
+        }
+
+        /*********************************************************************************************************************
+        *  SpinupCycle
+        *  Description: One cycle of the soil spin-up: the litter inputs of each age from 0 to maxage, and at maxage the
+        *               stand's live biomass killed by the disturbance.
+        **********************************************************************************************************************/
+        private void SpinupCycle(ActiveSite site, double[,,] inputs, double[,] live, int maxage, SpinUpDisturbance disturbance)
+        {
+            int idxSpecies;
+            double wood;
+            double nonwood;
+
+            for (int iage = 0; iage <= maxage; iage++)
+            {
+                foreach (ISpecies species in PlugIn.ModelCore.Species)
+                {
+                    idxSpecies = (int)species.Index;
+                    if (SpeciesPresent[idxSpecies])
+                    {
+                        wood = 0.0;
+                        nonwood = 0.0;
+                        for (int i = 0; i < NUMBIOMASSCOMPONENTS; i++)
+                        {
+                            netCLoss[i, idxSpecies] = inputs[i, idxSpecies, iage];
+                            if (i == 0)
+                                wood += live[i, idxSpecies];
+                            else
+                                nonwood += live[i, idxSpecies];
+                        }
+                        if (iage == maxage)
+                        //simulate the input from a stand-replacing event.
+                        {
+                            DisturbanceImpactsBiomass(site, species, iage, wood / BIOTOC, nonwood / BIOTOC, disturbance.DistTypeName, disturbance.Severity);
+                            //DisturbanceImpactsDOM(site, ":fire", 4); //this has a species loop in it and should not be inside of one here
+                        }
+                    }
+                }
+                if (iage == maxage)
+                {
+                    DisturbanceImpactsDOM(site, disturbance.DistTypeName, disturbance.Severity);
+                }
+
+                ProcessSoils(site, Library.UniversalCohorts.Cohorts.ComputeNonYoungBiomass(SiteVars.Cohorts[site]), 0, -1);
+            }
         }
 
         /*********************************************************************************************************************

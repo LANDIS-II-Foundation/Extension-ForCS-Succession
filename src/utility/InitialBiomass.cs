@@ -72,11 +72,12 @@ namespace Landis.Extension.Succession.ForC
         }
         //---------------------------------------------------------------------
 
-        private static IDictionary<uint, InitialBiomass> initialSites;
-            //  Initial site biomass for each unique pair of initial
-            //  community and ecoregion; Key = 32-bit unsigned integer where
-            //  high 16-bits is the map code of the initial community and the
-            //  low 16-bits is the ecoregion's map code
+        private static IDictionary<ulong, InitialBiomass> initialSites;
+            //  Initial site biomass for each unique combination of initial
+            //  community, ecoregion and spin-up last-disturbance code; Key =
+            //  64-bit unsigned integer where the high 32 bits are the key of
+            //  the community and ecoregion (ComputeKey) and the low 32 bits
+            //  are the code (0 without SpinUpLastDisturbanceMap)
 
         private static IDictionary<uint, List<ICohort>> sortedCohorts;
         //  Age cohorts for an initial community sorted from oldest to
@@ -96,7 +97,7 @@ namespace Landis.Extension.Succession.ForC
 
         static InitialBiomass()
         {
-            initialSites = new Dictionary<uint, InitialBiomass>();
+            initialSites = new Dictionary<ulong, InitialBiomass>();
             sortedCohorts = new Dictionary<uint, List<ICohort>>();
         }
 
@@ -128,7 +129,9 @@ namespace Landis.Extension.Succession.ForC
                                              ICommunity initialCommunity)
         {
             IEcoregion ecoregion = PlugIn.ModelCore.Ecoregion[site];
-            uint key = ComputeKey(initialCommunity.MapCode, ecoregion.MapCode);
+            int lastDisturbanceCode;
+            SpinUpReturnInterval returnInterval = ReturnIntervalFor(site, out lastDisturbanceCode);
+            ulong key = ((ulong)ComputeKey(initialCommunity.MapCode, ecoregion.MapCode) << 32) | (uint)lastDisturbanceCode;
             InitialBiomass initialBiomass;
             if (initialSites.TryGetValue(key, out initialBiomass))
                 return initialBiomass;
@@ -142,7 +145,7 @@ namespace Landis.Extension.Succession.ForC
                 sortedCohorts[initialCommunity.MapCode] = sortedAgeCohorts;
             }
 
-            SiteCohorts cohorts = MakeBiomassCohorts(sortedAgeCohorts, site);
+            SiteCohorts cohorts = MakeBiomassCohorts(sortedAgeCohorts, site, CohortBiomass.InitialBiomass, returnInterval);
             initialBiomass = new InitialBiomass(
                         cohorts,
                         SiteVars.SoilOrganicMatterC[site],
@@ -200,14 +203,24 @@ namespace Landis.Extension.Succession.ForC
         /// <param name="initialBiomassMethod">
         /// The method for computing the initial biomass for a new cohort.
         /// </param>
+        /// <param name="returnInterval">
+        /// The site's return-interval spin-up, or null for the spin-up that cycles the present stand's age.
+        /// </param>
         public static SiteCohorts MakeBiomassCohorts(List<ICohort> ageCohorts,
                                                      ActiveSite site,
-                                                     ComputeMethod initialBiomassMethod)
+                                                     ComputeMethod initialBiomassMethod,
+                                                     SpinUpReturnInterval returnInterval = null)
         {
             SiteVars.Cohorts[site] = new SiteCohorts();
             
             if (ageCohorts.Count == 0)
                 return SiteVars.Cohorts[site];
+
+            double[,,] returnIntervalInputs = null;
+            double[,] returnIntervalLive = null;
+            if (returnInterval != null)
+                GrowReturnIntervalStand(ageCohorts, site, initialBiomassMethod, returnInterval.ReturnInterval,
+                                        out returnIntervalInputs, out returnIntervalLive);
 
             if (SoilVars.iParams.BiomassSpinUpFlag == 0)
             {
@@ -228,9 +241,13 @@ namespace Landis.Extension.Succession.ForC
             {
                 ReadSoilValuesFromTable(site);
             }
-            else
+            else if (returnInterval == null)
             {
                 SiteVars.soilClass[site].SpinupSoils(site);
+            }
+            else
+            {
+                SiteVars.soilClass[site].SpinupSoils(site, returnIntervalInputs, returnIntervalLive, returnInterval);
             }
             SiteVars.soilClass[site].LastInitialSoilPass(site);
             return SiteVars.Cohorts[site];
@@ -249,6 +266,27 @@ namespace Landis.Extension.Succession.ForC
                                                      ActiveSite site,
                                                      ComputeMethod initialBiomassMethod)
         {
+            List<ISpecies> species = new List<ISpecies>();
+            List<int> ages = new List<int>();
+            foreach (ICohort cohort in ageCohorts)
+            {
+                species.Add(cohort.Species);
+                ages.Add(cohort.Data.Age);
+            }
+            SpinUpBiomassCohorts(species, ages, site, initialBiomassMethod, true);
+        }
+
+        /// <summary>
+        /// Grows cohorts of the given species and ages (oldest first) from the birth of the oldest to the present,
+        /// recording their litter inputs by cohort age for the soil spin-up. killSnags: kill the cohorts that the
+        /// initial snags say died just before the start.
+        /// </summary>
+        private static void SpinUpBiomassCohorts(List<ISpecies> species,
+                                                 List<int> ages,
+                                                 ActiveSite site,
+                                                 ComputeMethod initialBiomassMethod,
+                                                 bool killSnags)
+        {
             int indexNextAgeCohort = 0;
             //  The index in the list of sorted age cohorts of the next
             //  cohort to be considered
@@ -262,7 +300,7 @@ namespace Landis.Extension.Succession.ForC
             //  cohort with age = 1, then at time = 0, its age will N+1 not N.
             //  Therefore, when timestep = 1, the ending time is -1.
             int endTime = (successionTimestep == 1) ? -1 : 0;
-            for (int time = -(ageCohorts[0].Data.Age); time <= endTime; time += successionTimestep)
+            for (int time = -(ages[0]); time <= endTime; time += successionTimestep)
             {
                 //EcoregionData.GenerateNewClimate(time, successionTimestep);           //LANDIS CLIMATE LIBRARY
                 EcoregionData.GetAnnualTemperature(successionTimestep, 0);                        //ForCS CLIMATE
@@ -271,7 +309,7 @@ namespace Landis.Extension.Succession.ForC
 
                 if (time == endTime)
                 {
-                    SiteVars.soilClass[site].lastAge = ageCohorts[0].Data.Age;       //signal both that the spin-up is done, and the oldest age
+                    SiteVars.soilClass[site].lastAge = ages[0];       //signal both that the spin-up is done, and the oldest age
                     SiteVars.soilClass[site].bKillNow = false;
                     //PlugIn.ModelCore.UI.WriteLine("InitialBiomass age={0}, site={1}", ageCohorts[0].Age, site);
                 }
@@ -279,30 +317,104 @@ namespace Landis.Extension.Succession.ForC
                 PlugIn.GrowCohorts(site, successionTimestep, true);
 
                 //  Add those cohorts that were born at the current year
-                while (indexNextAgeCohort < ageCohorts.Count &&
-                       ageCohorts[indexNextAgeCohort].Data.Age == -time)
+                while (indexNextAgeCohort < ages.Count &&
+                       ages[indexNextAgeCohort] == -time)
                 {
-                    ISpecies species = ageCohorts[indexNextAgeCohort].Species;
-                    int initialBiomass = initialBiomassMethod(species, SiteVars.Cohorts[site], site);
+                    ISpecies cohortSpecies = species[indexNextAgeCohort];
+                    int initialBiomass = initialBiomassMethod(cohortSpecies, SiteVars.Cohorts[site], site);
 
-                    SiteVars.Cohorts[site].AddNewCohort(ageCohorts[indexNextAgeCohort].Species, 1,
+                    SiteVars.Cohorts[site].AddNewCohort(cohortSpecies, 1,
                                                 initialBiomass, new System.Dynamic.ExpandoObject());
-                    SiteVars.soilClass[site].CollectBiomassMortality(species, 0, 0, 0, 0);      //dummy for getting it to recognize that the species is now present.
+                    SiteVars.soilClass[site].CollectBiomassMortality(cohortSpecies, 0, 0, 0, 0);      //dummy for getting it to recognize that the species is now present.
 
                     indexNextAgeCohort++;
                 }
                 if (time == endTime)
                 {
-                    SiteVars.soilClass[site].lastAge = ageCohorts[0].Data.Age;       //signal both that the spin-up is done, and the oldest age
+                    SiteVars.soilClass[site].lastAge = ages[0];       //signal both that the spin-up is done, and the oldest age
                     SiteVars.soilClass[site].bKillNow = false;
                     // PlugIn.ModelCore.UI.WriteLine("InitialBiomass age={0}, site={1}", ageCohorts[0].Age, site);
                 }
-                else if (time == endTime - 1)   //just before the last timestep, we want to send a signal to the growth routine to kill the 
+                else if (time == endTime - 1 && killSnags)   //just before the last timestep, we want to send a signal to the growth routine to kill the 
                 {                               //cohorts that need to be snags. Hardwire this first for testing.
                     SiteVars.soilClass[site].bKillNow = true;
                 }
 
             }
+        }
+
+        //---------------------------------------------------------------------
+
+        /// <summary>
+        /// The site's return-interval spin-up (SpinUpReturnIntervals), with its LastDisturbance replaced by the
+        /// site's code in SpinUpLastDisturbanceMap if the code is in that map's table; null if the soil spin-up is off
+        /// or the site's ecoregion has no return interval. lastDisturbanceCode is the code used, or 0.
+        /// </summary>
+        private static SpinUpReturnInterval ReturnIntervalFor(ActiveSite site, out int lastDisturbanceCode)
+        {
+            lastDisturbanceCode = 0;
+            SpinUpReturnInterval returnInterval;
+            if (SoilVars.iParams.SoilSpinUpFlag == 0 ||
+                !SoilVars.iParams.SpinUpReturnIntervals.TryGetValue(PlugIn.ModelCore.Ecoregion[site], out returnInterval))
+                return null;
+
+            SpinUpDisturbance lastDisturbance;
+            if (SiteVars.SpinUpLastDisturbanceCode != null &&
+                SoilVars.iParams.SpinUpLastDisturbanceCodes.TryGetValue(SiteVars.SpinUpLastDisturbanceCode[site], out lastDisturbance))
+            {
+                lastDisturbanceCode = SiteVars.SpinUpLastDisturbanceCode[site];
+                return returnInterval.WithLastDisturbance(lastDisturbance);
+            }
+            return returnInterval;
+        }
+
+        //---------------------------------------------------------------------
+
+        /// <summary>
+        /// Grows the stand that a return-interval spin-up cycles: the site's community from bare ground for
+        /// returnInterval years, each cohort established at its present offset from the oldest (a cohort that would not
+        /// yet have established is left out). Returns its litter inputs by cohort age (0 to returnInterval) and its live
+        /// biomass at the end, and leaves the site without cohorts and those records empty for the present stand.
+        /// </summary>
+        private static void GrowReturnIntervalStand(List<ICohort> ageCohorts,
+                                                    ActiveSite site,
+                                                    ComputeMethod initialBiomassMethod,
+                                                    int returnInterval,
+                                                    out double[,,] inputs,
+                                                    out double[,] live)
+        {
+            int oldest = ageCohorts[0].Data.Age;
+            List<ISpecies> species = new List<ISpecies>();
+            List<int> ages = new List<int>();
+            foreach (ICohort cohort in ageCohorts)
+            {
+                int age = returnInterval - (oldest - cohort.Data.Age);
+                if (age >= 1)
+                {
+                    species.Add(cohort.Species);
+                    ages.Add(age);
+                }
+            }
+            SpinUpBiomassCohorts(species, ages, site, initialBiomassMethod, false);
+
+            int nSpecies = PlugIn.ModelCore.Species.Count;
+            inputs = new double[SoilClass.NUMBIOMASSCOMPONENTS, nSpecies, returnInterval + 1];
+            live = new double[SoilClass.NUMBIOMASSCOMPONENTS, nSpecies];
+            for (int i = 0; i < SoilClass.NUMBIOMASSCOMPONENTS; i++)
+            {
+                for (int idxSpecies = 0; idxSpecies < nSpecies; idxSpecies++)
+                {
+                    for (int age = 0; age <= returnInterval; age++)
+                    {
+                        inputs[i, idxSpecies, age] = SoilVars.BioInput[i, idxSpecies, age];
+                        SoilVars.BioInput[i, idxSpecies, age] = 0.0;
+                    }
+                    live[i, idxSpecies] = SoilVars.BioLive[i, idxSpecies];
+                    SoilVars.BioLive[i, idxSpecies] = 0.0;
+                }
+            }
+            SiteVars.soilClass[site].lastAge = 0;
+            SiteVars.Cohorts[site] = new SiteCohorts();
         }
 
         //---------------------------------------------------------------------

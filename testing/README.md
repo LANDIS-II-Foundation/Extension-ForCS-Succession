@@ -49,7 +49,7 @@ FluxBio_records 1 == 0
 FluxDOM_records 1 > 0
 ```
 
-The column is one of `totals.csv`'s, and `<op>` is one of `== != > >= < <=`. A value `case:<name>` takes the same column and year from that case's `expected/totals.csv`, as in `spinup-no-fire-dom`'s `TotalDOM 1 != case:dom-a-spinup`. `check.py` evaluates them.
+The column is one of `totals.csv`'s, and `<op>` is one of `== != > >= < <=`. A value `case:<name>` takes the same column and year from that case, as in `spinup-no-fire-dom`'s `TotalDOM 1 != case:dom-a-spinup`: from its results in the same run if it ran, and otherwise from its `expected/totals.csv`. All cases run before any is checked. `check.py` evaluates them.
 
 ## Cases
 
@@ -64,6 +64,11 @@ The column is one of `totals.csv`'s, and `<op>` is one of `== != > >= < <=`. A v
 | `harvest-no-cut` | as `dom-c-clearcut`, with a prescription that matches no cohort; the harvest DOM rows still act (#9) |
 | `partial-cut` | Biomass Harvest cutting 30 % of a single cohort (#11) |
 | `spinup-no-fire-dom` | as `dom-a-spinup`, with no fire DOM rows; must differ from `dom-a-spinup` (#9) |
+| `spinup-off` | as `dom-a-spinup`, with the soil spin-up off (DOM from `AmountT0`) |
+| `spinup-off-table` | as `spinup-off`, with a `SpinUpReturnIntervals` table, which must be ignored |
+| `spinup-ri-young` | as `spinup-young`, with a 250-year return interval and a harvest ending the predecessor (#15) |
+| `spinup-ri-young-fire` | as `spinup-ri-young`, with a severity-4 fire ending the predecessor (#15) |
+| `spinup-ri-map` | as `spinup-ri-young`, with a `SpinUpLastDisturbanceMap` giving the cell a fire; must equal `spinup-ri-young-fire` (#15) |
 | `spinup-young` | one cell, a 25-year-old Hw cohort, with Bl listed but absent (#14) |
 | `spinup-young-bl-zero` | as `spinup-young`, with Bl's `AmountT0` at 0; must be identical to `spinup-young` (#14) |
 | `wind-no-rows` | as `dom-d-wind`, with no wind rows in the disturbance matrix; killed biomass goes to DOM |

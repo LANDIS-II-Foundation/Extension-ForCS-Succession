@@ -307,6 +307,12 @@ namespace Landis.Extension.Succession.ForC
         public double SpinUpTolerance { get { return m_dSpinUpTolerance; } }
         public int SpinUpIterations { get { return m_nSpinUpIterations; } }
 
+        private Dictionary<IEcoregion, SpinUpReturnInterval> spinUpReturnIntervals = new Dictionary<IEcoregion, SpinUpReturnInterval>();
+        private Dictionary<int, SpinUpDisturbance> spinUpLastDisturbanceCodes = new Dictionary<int, SpinUpDisturbance>();
+        public IDictionary<IEcoregion, SpinUpReturnInterval> SpinUpReturnIntervals { get { return spinUpReturnIntervals; } }
+        public string SpinUpLastDisturbanceMap { get; set; }
+        public IDictionary<int, SpinUpDisturbance> SpinUpLastDisturbanceCodes { get { return spinUpLastDisturbanceCodes; } }
+
 
         public string ForCSFunctionalGroupFilePath
         {

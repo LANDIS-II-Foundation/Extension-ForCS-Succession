@@ -47,6 +47,12 @@ namespace Landis.Extension.Succession.ForC
         double SpinUpTolerance { get ; }
         int SpinUpIterations { get ; }
 
+        /// The spin-up of ecoregions that have a return interval (optional table SpinUpReturnIntervals).
+        IDictionary<IEcoregion, SpinUpReturnInterval> SpinUpReturnIntervals { get; }
+        /// A map of codes that override the ecoregion's LastDisturbance site by site, and what each code means (optional).
+        string SpinUpLastDisturbanceMap { get; set; }
+        IDictionary<int, SpinUpDisturbance> SpinUpLastDisturbanceCodes { get; }
+
         /// The maximum relative biomass for each shade class.
         Landis.Library.Parameters.Ecoregions.AuxParm<Percentage>[] MinRelativeBiomass { get; }
         /// Definitions of sufficient light probabilities.

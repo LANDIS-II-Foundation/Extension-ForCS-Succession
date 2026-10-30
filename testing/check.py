@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 """Check a case's totals against the statements in its `checks` file.
 
-Usage: check.py <totals.csv> <checks> <cases_dir>
+Usage: check.py <totals.csv> <checks> <cases_dir> [<work_dir> <case> ...]
 
 Each line of <checks> is one statement about a column of totals.csv in one year:
 
   <column> <time> <op> <value>
 
 <op> is one of == != > >= < <=. <value> is a number, or case:<name> for the same column and
-year in testing/cases/<name>/expected/totals.csv. Blank lines and lines starting with # are
-ignored. Exits 1 if any statement is false.
+year in that case's results: from <work_dir>/<name>/digest/totals.csv if <name> is one of the
+listed cases (those run with this one), and otherwise from testing/cases/<name>/expected/totals.csv.
+Blank lines and lines starting with # are ignored. Exits 1 if any statement is false.
 """
 import csv
 import operator
@@ -25,7 +26,7 @@ def read(path):
         return {int(r["Time"]): r for r in csv.DictReader(fh)}
 
 
-def main(totals, checks, cases):
+def main(totals, checks, cases, work=None, *ran):
     tot = read(totals)
     failed = 0
     for n, line in enumerate(pathlib.Path(checks).read_text().splitlines(), 1):
@@ -36,7 +37,11 @@ def main(totals, checks, cases):
             col, t, op, ref = line.split()
             t = int(t)
             if ref.startswith("case:"):
-                other = read(pathlib.Path(cases) / ref[5:] / "expected" / "totals.csv")
+                name = ref[5:]
+                if name in ran:
+                    other = read(pathlib.Path(work) / name / "digest" / "totals.csv")
+                else:
+                    other = read(pathlib.Path(cases) / name / "expected" / "totals.csv")
                 want = float(other[t][col])
             else:
                 want = float(ref)
@@ -51,6 +56,6 @@ def main(totals, checks, cases):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 4:
+    if len(sys.argv) < 4:
         sys.exit(__doc__)
     main(*sys.argv[1:])

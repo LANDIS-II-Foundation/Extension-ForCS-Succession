@@ -34,6 +34,7 @@ fi
 [ ${#cases[@]} -gt 0 ] || { echo "run-cases.sh: no cases" >&2; exit 2; }
 
 failed=()
+ran=()
 for c in "${cases[@]}"; do
   cdir=$here/cases/$c
   [ -d "$cdir" ] || { echo "run-cases.sh: no case $c" >&2; exit 2; }
@@ -64,8 +65,16 @@ for c in "${cases[@]}"; do
     failed+=("$c")
     continue
   fi
+  ran+=("$c")
+done
+
+## A case's checks may compare it with another case (case:<name>); they read that case's results from
+## this run when it ran, so all cases run before any is checked.
+for c in "${ran[@]}"; do
+  cdir=$here/cases/$c
+  w=$here/work/$c
   if [ -f "$cdir/checks" ] &&
-    ! python3 -I "$here/check.py" "$w/digest/totals.csv" "$cdir/checks" "$here/cases" > "$w/checks.log" 2>&1; then
+    ! python3 -I "$here/check.py" "$w/digest/totals.csv" "$cdir/checks" "$here/cases" "$here/work" "${ran[@]}" > "$w/checks.log" 2>&1; then
     echo "FAIL $c: checks (testing/work/$c/checks.log)"
     grep -v '^ok' "$w/checks.log" | sed 's/^/     /' | tail -5 || true
     failed+=("$c")

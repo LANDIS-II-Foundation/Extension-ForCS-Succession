@@ -64,6 +64,21 @@ namespace Landis.Extension.Succession.ForC
                     MaxLife = species.Longevity;
             }
 
+            if (parameters.SoilSpinUpFlag == 1)
+            {
+                foreach (KeyValuePair<IEcoregion, SpinUpReturnInterval> kvp in parameters.SpinUpReturnIntervals)
+                {
+                    //the spin-up records litter inputs by cohort age, up to the longest species longevity
+                    if (kvp.Value.ReturnInterval >= MaxLife)
+                        throw new ApplicationException(string.Format("SpinUpReturnIntervals: the return interval of {0} ({1}) must be shorter than the longest species longevity ({2}).",
+                            kvp.Key.Name, kvp.Value.ReturnInterval, MaxLife));
+                    modelCore.UI.WriteLine("   Spin-up of {0}: cycles of {1} years ending with {2}; the last ends with {3}.",
+                        kvp.Key.Name, kvp.Value.ReturnInterval, kvp.Value.CycleDisturbance, kvp.Value.LastDisturbance);
+                }
+            }
+            else if (parameters.SpinUpReturnIntervals.Count > 0 || parameters.SpinUpLastDisturbanceMap != null)
+                modelCore.UI.WriteLine("   The soil spin-up is off, so SpinUpReturnIntervals and SpinUpLastDisturbanceMap are not used.");
+
             SiteVars.Initialize(parameters, paramDM);
         }
 
@@ -113,6 +128,8 @@ namespace Landis.Extension.Succession.ForC
             base.Initialize(modelCore, parameters.SeedAlgorithm); 
 
             InitialBiomass.Initialize(Timestep);
+            if (parameters.SoilSpinUpFlag == 1 && parameters.SpinUpLastDisturbanceMap != null)
+                ReadSpinUpLastDisturbanceMap(parameters.SpinUpLastDisturbanceMap);
 
             Cohort.MortalityEvent += CohortMortality;
             SiteCohorts.DisturbanceEvent += SiteDisturbed;
@@ -516,6 +533,28 @@ namespace Landis.Extension.Succession.ForC
                     }
 
                     InitializeSite(activeSite);
+                }
+            }
+        }
+
+        //---------------------------------------------------------------------
+
+        /// <summary>
+        /// Reads the codes of SpinUpLastDisturbanceMap into SiteVars.SpinUpLastDisturbanceCode.
+        /// </summary>
+        private void ReadSpinUpLastDisturbanceMap(string path)
+        {
+            ModelCore.UI.WriteLine("   Reading the spin-up's last-disturbance map \"{0}\" ...", path);
+            SiteVars.SpinUpLastDisturbanceCode = ModelCore.Landscape.NewSiteVar<int>();
+            IInputRaster<UIntPixel> map = ModelCore.OpenRaster<UIntPixel>(path);
+            using (map)
+            {
+                UIntPixel pixel = map.BufferPixel;
+                foreach (Site site in ModelCore.Landscape.AllSites)
+                {
+                    map.ReadBufferPixel();
+                    if (site.IsActive)
+                        SiteVars.SpinUpLastDisturbanceCode[site] = (int)pixel.MapCode.Value;
                 }
             }
         }
