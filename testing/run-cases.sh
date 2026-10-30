@@ -71,7 +71,7 @@ for c in "${cases[@]}"; do
     echo "PASS $c"
   else
     echo "FAIL $c: output differs from expected/ (testing/work/$c/*.diff)"
-    head -20 "$w/totals.diff" "$w/sha256sums.diff" 2> /dev/null | sed 's/^/     /'
+    { head -20 "$w/totals.diff"; head -20 "$w/sha256sums.diff" 2> /dev/null; } | sed 's/^/     /' || true
     failed+=("$c")
   fi
 done
