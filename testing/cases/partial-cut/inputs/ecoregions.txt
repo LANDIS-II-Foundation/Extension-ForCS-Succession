@@ -1,0 +1,4 @@
+LandisData  "Ecoregions"
+
+>> Active  MapCode  Name  Description
+   yes     1        eco1  "active"

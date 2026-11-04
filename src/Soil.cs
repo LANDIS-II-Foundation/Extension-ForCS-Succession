@@ -79,8 +79,10 @@ namespace Landis.Extension.Succession.ForC
 
         private ActiveSite m_ActiveSite;
 
-        private const int NUMDISTS = 9;  //note, if add more dists, then increase this
-        private bool[] DistOccurred = new bool[NUMDISTS];      
+        //Disturbance types that touched the site since its last growth step, whose DOM transfers are still to be done,
+        //and the types whose DOM transfers have been done this year (each type acts once a year).
+        private List<string> DistRecorded;
+        private HashSet<string> DistDOMDone;
         private bool[] SpeciesPresent = new bool[PlugIn.ModelCore.Species.Count]; //true if a species is or was ever present on the site
 
         //Variables collected or used for output purposes.
@@ -711,7 +713,6 @@ namespace Landis.Extension.Succession.ForC
             double nonwoodC = nonwood * BIOTOC;   //turns biomass into C
             double woodC = wood * BIOTOC;
 
-            DistOccurred[idxDist] = true;
             if (!SpeciesPresent[idxSpecies])
                 SpeciesPresent[idxSpecies] = true;
 
@@ -727,36 +728,27 @@ namespace Landis.Extension.Succession.ForC
                 {
                     if (SiteVars.FireSeverity == null)
                         SiteVars.FireSeverity = PlugIn.ModelCore.GetSiteVar<byte>("Fire.Severity");
-                    if (SiteVars.FireSeverity == null)
-                        return;  // no fire extension loaded; nothing to do
-                    severity = SiteVars.FireSeverity[site];
-                    if (severity == 0)
-                        return;
+                    severity = (SiteVars.FireSeverity == null) ? (byte)0 : SiteVars.FireSeverity[site];
                 }
                 else
                 {   //called during spin-up
                     severity = (byte)tmpFireSeverity;
                 }
                 System.Diagnostics.Debug.Assert((severity >= 0) && (severity <= FireEffects.mk_nIntensityCount));
-                oDisturbTransferPoolsBiomass = (DisturbTransferFromPools)SoilVars.iParamsDM.DisturbFireFromBiomassPools[severity - 1];
+                if (severity > 0)
+                    oDisturbTransferPoolsBiomass = (DisturbTransferFromPools)SoilVars.iParamsDM.DisturbFireFromBiomassPools[severity - 1];
+                else
+                {   //a fire killed the cohort, but no fire severity is registered for the site
+                    WarnOnce("fire without severity", "   ForC: a fire killed a cohort on a site with no fire severity; its biomass goes to DOM.");
+                    oDisturbTransferPoolsBiomass = AllToDOM;
+                }
             }
             else
             {
-                TransferName = DistTypeName;
-                if (DistTypeName.Equals(DisturbTransferFromPool.mk_sDisturbTypeHarvest, StringComparison.OrdinalIgnoreCase))
-                {
-                    SiteVars.HarvestPrescriptionName = PlugIn.ModelCore.GetSiteVar<string>("Harvest.PrescriptionName");
-                    TransferName = SiteVars.HarvestPrescriptionName[site];
-
-                    //see if the prescription name is used, if not, reset the transfer to be harvest
-                    if (!SoilVars.iParamsDM.DisturbOtherFromBiomassPools.ContainsKey(TransferName))
-                        TransferName = DistTypeName;
-                }
+                TransferName = PrescriptionOrType(site, DistTypeName, SoilVars.iParamsDM.DisturbOtherFromBiomassPools);
                 //PlugIn.ModelCore.UI.WriteLine("Yr={0}. DisturbBiomass Dist={1}.", (PlugIn.ModelCore.CurrentTime), TransferName, DistTypeName);
 
-                if (!SoilVars.iParamsDM.DisturbOtherFromBiomassPools.ContainsKey(TransferName))
-                    return;
-                oDisturbTransferPoolsBiomass = (DisturbTransferFromPools)SoilVars.iParamsDM.DisturbOtherFromBiomassPools[TransferName];
+                oDisturbTransferPoolsBiomass = BiomassTransfers(TransferName);
                // PlugIn.ModelCore.UI.WriteLine("Yr={0}. DisturbBiomass  Success.", (PlugIn.ModelCore.CurrentTime));
 
             }
@@ -862,25 +854,24 @@ namespace Landis.Extension.Succession.ForC
             idxDist = DistTypeIndex(DistTypeName);
             string TransferName = "null";
 
-            if (DistOccurred[idxDist])          //check to see if this disturbance has already occurred on this site in this year
-                return;                        //if so then don't disturb this site again. 
-
-            DistOccurred[idxDist] = true;
-
             int start = DistTypeName.IndexOf(":") + 1;
             if (start < DistTypeName.Length)
                 DistTypeName = DistTypeName.Substring(start);
+
+            if (DistDOMDone == null)
+                DistDOMDone = new HashSet<string>();
+            if (!DistDOMDone.Add(DistTypeName))     //this disturbance has already acted on the DOM of this site this year,
+                return;                             //so don't disturb this site again.
+
             DisturbTransferFromPools oDisturbTransferPoolsDOM;
-            DisturbTransferFromPools oDisturbTransferPoolsBiomass;
             if (DistTypeName.Equals(DisturbTransferFromPool.mk_sDisturbTypeFire, StringComparison.OrdinalIgnoreCase))
             {
                 if (tmpFireSeverity == 0)   //usual case
                 {
                     SiteVars.FireSeverity = PlugIn.ModelCore.GetSiteVar<byte>("Fire.Severity");
-                    System.Diagnostics.Debug.Assert(SiteVars.FireSeverity != null);
+                    if (SiteVars.FireSeverity == null)
+                        return;     //no fire extension registers a severity
                     severity = SiteVars.FireSeverity[site];
-                    if (severity == 0)
-                        SiteVars.FireSeverity = PlugIn.ModelCore.GetSiteVar<byte>("Fire.Severity");
 
                     //PlugIn.ModelCore.UI.WriteLine("Yr={0}.    site={1}, severity={2}.", (PlugIn.ModelCore.CurrentTime), site.Location, severity);
 
@@ -893,27 +884,16 @@ namespace Landis.Extension.Succession.ForC
                 }
                 System.Diagnostics.Debug.Assert((severity >= 0) && (severity <= FireEffects.mk_nIntensityCount));
                 oDisturbTransferPoolsDOM = (DisturbTransferFromPools)SoilVars.iParamsDM.DisturbFireFromDOMPools[severity-1];
-
-                oDisturbTransferPoolsBiomass = (DisturbTransferFromPools)SoilVars.iParamsDM.DisturbFireFromBiomassPools[severity-1];
             }
             else
             {
-                TransferName = DistTypeName;
-                if (DistTypeName.Equals(DisturbTransferFromPool.mk_sDisturbTypeHarvest, StringComparison.OrdinalIgnoreCase))
-                {
-                    SiteVars.HarvestPrescriptionName = PlugIn.ModelCore.GetSiteVar<string>("Harvest.PrescriptionName");
-                    TransferName = SiteVars.HarvestPrescriptionName[site];
-
-                    //see if the prescription name is used, if not, reset the transfer to be harvest
-                    if (!SoilVars.iParamsDM.DisturbOtherFromDOMPools.ContainsKey(TransferName))
-                        TransferName = DistTypeName;
-                }
+                TransferName = PrescriptionOrType(site, DistTypeName, SoilVars.iParamsDM.DisturbOtherFromDOMPools);
 
                 //PlugIn.ModelCore.UI.WriteLine("Yr={0}. DisturbDOM Dist={1} Dist={2}.", (PlugIn.ModelCore.CurrentTime), TransferName, DistTypeName);
-                // If this key cannot be found, then there are no transfers to perform.
-                if (!SoilVars.iParamsDM.DisturbOtherFromDOMPools.ContainsKey(TransferName))
+                // If neither this type nor "other" has rows, then there are no transfers to perform.
+                oDisturbTransferPoolsDOM = DOMTransfers(TransferName);
+                if (oDisturbTransferPoolsDOM == null)
                     return;
-                oDisturbTransferPoolsDOM = (DisturbTransferFromPools)SoilVars.iParamsDM.DisturbOtherFromDOMPools[TransferName];
                 //PlugIn.ModelCore.UI.WriteLine("Yr={0}. DisturbDOM Success", (PlugIn.ModelCore.CurrentTime));
 
             }
@@ -937,11 +917,14 @@ namespace Landis.Extension.Succession.ForC
             {
                 if (SpeciesPresent[(int)species.Index])    //only process if the species has ever been on the site...
                 {
-                    logFluxDist.Write("{0},{1},{2},{3},{4},",
-                        PlugIn.ModelCore.CurrentTime, site.Location.Row, site.Location.Column, PlugIn.ModelCore.Ecoregion[site].MapCode, species.Name);
-                    //NOVEMBER TEMP logFluxDist.Write("{0},{1},{2},",
-                    //NOVEMBER TEMP PlugIn.ModelCore.CurrentTime, site.DataIndex, species.Name);
-                    logFluxDist.Write("{0},", idxDist);
+                    if (bPrintFlux)
+                    {
+                        logFluxDist.Write("{0},{1},{2},{3},{4},",
+                            PlugIn.ModelCore.CurrentTime, site.Location.Row, site.Location.Column, PlugIn.ModelCore.Ecoregion[site].MapCode, species.Name);
+                        //NOVEMBER TEMP logFluxDist.Write("{0},{1},{2},",
+                        //NOVEMBER TEMP PlugIn.ModelCore.CurrentTime, site.DataIndex, species.Name);
+                        logFluxDist.Write("{0},", idxDist);
+                    }
 
                     double FPSsnag = 0;
                     double FPSdom = 0;
@@ -960,6 +943,7 @@ namespace Landis.Extension.Succession.ForC
                             FPSsnag += tofps;
                         else
                             FPSdom += tofps;
+                        if (bPrintFlux)
                             logFluxDist.Write("{0:0.000},", loss); //CtoAirFromDist
 
 
@@ -981,7 +965,7 @@ namespace Landis.Extension.Succession.ForC
                             tofloor = soilC[ipool, species.Index] * oDisturbTransfer.PropToDOM;
                             soilC[(int)SoilPoolType.FASTAG, species.Index] += tofloor;
                         }
-                        if (ipool == (int)SoilPoolType.SSTEMSNAG || ipool == (int)SoilPoolType.SOTHERSNAG)
+                        if (bPrintFlux && (ipool == (int)SoilPoolType.SSTEMSNAG || ipool == (int)SoilPoolType.SOTHERSNAG))
                         {
                             logFluxDist.Write("{0:0.000},", tofloor); //litterInput (from disturbance of snags)
                         }
@@ -991,9 +975,12 @@ namespace Landis.Extension.Succession.ForC
                         if (soilC[ipool, species.Index] < 0)
                             soilC[ipool, species.Index] = 0;
                     }
-                    logFluxDist.Write("{0:0.000},", FPSsnag); //CtoFPSFromDist SNAG
-                    logFluxDist.Write("{0:0.000},", FPSdom); //CtoFPSFromDist DOM
-                    logFluxDist.WriteLine("");
+                    if (bPrintFlux)
+                    {
+                        logFluxDist.Write("{0:0.000},", FPSsnag); //CtoFPSFromDist SNAG
+                        logFluxDist.Write("{0:0.000},", FPSdom); //CtoFPSFromDist DOM
+                        logFluxDist.WriteLine("");
+                    }
                 }
             }
 
@@ -1129,15 +1116,11 @@ namespace Landis.Extension.Succession.ForC
             if (LastPass == 0)  //Don't call the summary output if it is the last pass - we get the wrong root biomass values (or if it is soil spin-up)
                 SummaryOutput(site, totalBiomass, (SiteVars.LitterMass[site].Mass + SiteVars.DeadWoodMass[site].Mass), preGrowthBiomass);
 
-            for (i = 0; i < 5; i++)     //loop over disturbance types
+            DistDOMDone = null;     //reset, ready for next year. Note that this must be done here, because it is not species specific
+            for (i = 0; i <= 2; i++)        //moved from SummaryOutput, so that it is always done, even if SummaryOutput is not called.
             {
-                DistOccurred[i] = false;      //reset, ready for next year. Note that this must be done here, because it is not species specific
-                
-                if (i <= 2)                 //moved from SummaryOutput, so that it is always done, even if SummaryOutput is not called.
-                {
-                    TotTransfer[0, i] = 0.0;
-                    TotTransfer[1, i] = 0.0;
-                }
+                TotTransfer[0, i] = 0.0;
+                TotTransfer[1, i] = 0.0;
             }
 
             return;
@@ -1200,8 +1183,6 @@ namespace Landis.Extension.Succession.ForC
             {
                 for (int j = 0; j < 5; j++)
                 {
-                    DistOccurred[j] = false;      //reset, ready for next year 
-
                     for (i = 0; i < NUMBIOMASSCOMPONENTS; i++)
                     {
                         netCLoss[i, species.Index] = 0.0;     
@@ -1227,9 +1208,6 @@ namespace Landis.Extension.Succession.ForC
 
             for (int j = 0; j < 1; j++)
             {
-                if (j > 0 && !DistOccurred[j])  //We only need to print disturbances when and where they have occurred.
-                    continue;
-
                 if (bPrintFlux)
                 {
                     logFlux.Write("{0},{1},{2},{3},{4},",
@@ -1527,6 +1505,116 @@ namespace Landis.Extension.Succession.ForC
             oldBiomass = totalBiomass;
             PreGrowthRootBiomass = 0.0;
             RootBiomass = 0.0;
+        }
+
+        /*********************************************************************************************************************
+        *  RecordDisturbance
+        *  Description: Note that a disturbance of this type touched the site. Its DOM transfers are done by
+        *               DisturbanceImpactsDOMRecorded at the start of the site's next growth step.
+        **********************************************************************************************************************/
+        public void RecordDisturbance(string DistTypeName)
+        {
+            if (DistRecorded == null)
+                DistRecorded = new List<string>();
+            if (!DistRecorded.Contains(DistTypeName))
+                DistRecorded.Add(DistTypeName);
+        }
+
+        /*********************************************************************************************************************
+        *  DisturbanceImpactsDOMRecorded
+        *  Description: Do the DOM transfers of each disturbance type that touched the site since its last growth step, once
+        *               per type. This runs before the step's growth and soil processes, and the biomass the disturbances
+        *               killed is still held in netCLoss, so the transfers act only on the DOM that was there before.
+        **********************************************************************************************************************/
+        public void DisturbanceImpactsDOMRecorded(ActiveSite site, int years)
+        {
+            //A fire that burns a site without killing a cohort raises no event, so look up when the site last burned.
+            if (SiteVars.TimeOfLastFire != null && SiteVars.FireSeverity != null &&
+                SiteVars.TimeOfLastFire[site] > PlugIn.ModelCore.CurrentTime - years && SiteVars.FireSeverity[site] > 0)
+                RecordDisturbance("disturbance:fire");
+
+            if (DistRecorded == null)
+                return;
+            foreach (string DistTypeName in DistRecorded)
+                DisturbanceImpactsDOM(site, DistTypeName, 0);
+            DistRecorded = null;
+        }
+
+        /*********************************************************************************************************************
+        *  PrescriptionOrType
+        *  Description: The name of a disturbance's rows in the disturbance matrix: for harvest, the prescription's name if
+        *               the matrix has rows for it, and otherwise the type's name.
+        **********************************************************************************************************************/
+        private static string PrescriptionOrType(ActiveSite site, string DistTypeName, IDictionary<string, IDisturbTransferFromPools> rows)
+        {
+            if (DistTypeName.Equals(DisturbTransferFromPool.mk_sDisturbTypeHarvest, StringComparison.OrdinalIgnoreCase))
+            {
+                SiteVars.HarvestPrescriptionName = PlugIn.ModelCore.GetSiteVar<string>("Harvest.PrescriptionName");
+                string prescription = (SiteVars.HarvestPrescriptionName == null) ? null : SiteVars.HarvestPrescriptionName[site];
+
+                //see if the prescription name is used, if not, the transfer is harvest
+                if (prescription != null && rows.ContainsKey(prescription))
+                    return prescription;
+            }
+            return DistTypeName;
+        }
+
+        /*********************************************************************************************************************
+        *  BiomassTransfers, DOMTransfers
+        *  Description: The rows of the disturbance matrix for a type that is not fire. A type without rows takes the
+        *               "other" rows. If there are none, killed biomass all goes to DOM, as it does in natural mortality, so
+        *               that no carbon leaves the site unaccounted for, and DOM is not disturbed.
+        **********************************************************************************************************************/
+        private const string OtherDistType = "other";
+        private static DisturbTransferFromPools allToDOM;
+        private static HashSet<string> warned = new HashSet<string>();
+
+        private static DisturbTransferFromPools BiomassTransfers(string TransferName)
+        {
+            IDictionary<string, IDisturbTransferFromPools> rows = SoilVars.iParamsDM.DisturbOtherFromBiomassPools;
+            if (rows.ContainsKey(TransferName))
+                return (DisturbTransferFromPools)rows[TransferName];
+            if (rows.ContainsKey(OtherDistType))
+            {
+                WarnOnce("biomass " + TransferName, string.Format("   ForC: the disturbance matrix has no biomass transfers for \"{0}\"; using those for \"{1}\".", TransferName, OtherDistType));
+                return (DisturbTransferFromPools)rows[OtherDistType];
+            }
+            WarnOnce("biomass " + TransferName, string.Format("   ForC: the disturbance matrix has no biomass transfers for \"{0}\" or \"{1}\"; the biomass it kills goes to DOM.", TransferName, OtherDistType));
+            return AllToDOM;
+        }
+
+        private static DisturbTransferFromPools DOMTransfers(string TransferName)
+        {
+            IDictionary<string, IDisturbTransferFromPools> rows = SoilVars.iParamsDM.DisturbOtherFromDOMPools;
+            if (rows.ContainsKey(TransferName))
+                return (DisturbTransferFromPools)rows[TransferName];
+            if (rows.ContainsKey(OtherDistType))
+            {
+                WarnOnce("DOM " + TransferName, string.Format("   ForC: the disturbance matrix has no DOM transfers for \"{0}\"; using those for \"{1}\".", TransferName, OtherDistType));
+                return (DisturbTransferFromPools)rows[OtherDistType];
+            }
+            return null;
+        }
+
+        private static DisturbTransferFromPools AllToDOM
+        {
+            get
+            {
+                if (allToDOM == null)
+                {
+                    allToDOM = new DisturbTransferFromPools("all to DOM");
+                    allToDOM.InitializeBiomassPools();
+                    for (int nPoolID = 1; nPoolID <= NUMBIOMASSCOMPONENTS; nPoolID++)
+                        ((DisturbTransferFromPool)allToDOM.GetDisturbTransfer(nPoolID)).PropToDOM = 1.0;
+                }
+                return allToDOM;
+            }
+        }
+
+        private static void WarnOnce(string key, string message)
+        {
+            if (warned.Add(key))
+                PlugIn.ModelCore.UI.WriteLine(message);
         }
 
         /*********************************************************************************************************************

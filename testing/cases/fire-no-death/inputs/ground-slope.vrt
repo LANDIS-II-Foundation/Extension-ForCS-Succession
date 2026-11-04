@@ -1,0 +1,9 @@
+<VRTDataset rasterXSize="6" rasterYSize="6">
+  <GeoTransform>0, 100, 0, 600, 0, -100</GeoTransform>
+  <VRTRasterBand dataType="Int16" band="1">
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">ground-slope.asc</SourceFilename>
+      <SourceBand>1</SourceBand>
+    </SimpleSource>
+  </VRTRasterBand>
+</VRTDataset>

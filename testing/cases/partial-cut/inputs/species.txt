@@ -1,0 +1,4 @@
+LandisData  "Species"
+
+>> Code  Longevity  SexMat  SeedEff  SeedMax  VegProb  SproutMin  SproutMax  PostFireRegen
+   Hw    650        20      50       1398     0.0      0          0          none

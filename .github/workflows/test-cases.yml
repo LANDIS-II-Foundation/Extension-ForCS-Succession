@@ -1,0 +1,44 @@
+# Run the test cases in testing/cases/ with a freshly built ForC Succession, inside the LANDIS-II
+# image, and compare their outputs with testing/cases/*/expected/. See testing/README.md.
+name: Test cases
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+  pull_request:
+    paths:
+      - "src/**"
+      - "testing/**"
+      - ".github/workflows/test-cases.yml"
+
+permissions:
+  contents: read
+
+env:
+  # The image the cases run in, pinned by digest. Changing it can change expected outputs.
+  LANDIS_IMAGE: ghcr.io/landis-ii-foundation/landis-ii-v8-uclv2-release@sha256:5814bdc3c52c2eade7b0243f3656daae31b99ab380a892c20a4d24174c894e19
+
+jobs:
+  cases:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Pull the LANDIS-II image
+        run: docker pull "$LANDIS_IMAGE"
+
+      - name: Build ForC Succession against the image's libraries
+        run: testing/build.sh "$LANDIS_IMAGE" build
+
+      - name: Run the test cases
+        run: testing/run-cases.sh build/Landis.Extension.Succession.ForC-v4.dll "$LANDIS_IMAGE"
+
+      - if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: test-case-outputs
+          path: |
+            testing/work
+            build/build.log
+          if-no-files-found: ignore

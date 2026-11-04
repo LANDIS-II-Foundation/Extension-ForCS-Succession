@@ -115,6 +115,7 @@ namespace Landis.Extension.Succession.ForC
             InitialBiomass.Initialize(Timestep);
 
             Cohort.MortalityEvent += CohortMortality;
+            SiteCohorts.DisturbanceEvent += SiteDisturbed;
             //Landis.Library.UniversalCohorts.Cohort.DeathEvent += CohortTotalMortality;
 
             InitializeSites(parameters.InitialCommunities, parameters.InitialCommunitiesMap, modelCore);
@@ -128,6 +129,7 @@ namespace Landis.Extension.Succession.ForC
                 SiteVars.CapacityReduction = PlugIn.ModelCore.GetSiteVar<double>("Harvest.CapacityReduction");
 
             SiteVars.FireSeverity = PlugIn.ModelCore.GetSiteVar<byte>("Fire.Severity");
+            SiteVars.TimeOfLastFire = PlugIn.ModelCore.GetSiteVar<int>("Fire.TimeOfLastEvent");
 
             //EcoregionData.GenerateNewClimate(PlugIn.ModelCore.CurrentTime, Timestep); //LANDIS CLIMATE LIBRARY
             EcoregionData.GetAnnualTemperature(Timestep, 0);                            //ForCS CLIMATE
@@ -212,6 +214,7 @@ namespace Landis.Extension.Succession.ForC
                     }
 
                     SiteVars.soilClass[site].DisturbanceImpactsBiomass(site, cohort.Species, cohort.Data.Age, wood, foliar, disturbanceType.Name, 0);
+                    SiteVars.soilClass[site].RecordDisturbance(disturbanceType.Name);
                 }
             }
             else
@@ -225,6 +228,7 @@ namespace Landis.Extension.Succession.ForC
                 //PlugIn.ModelCore.UI.WriteLine("Inputs:  {0}, {1}, {2}, {3}", fractionPartialMortality, foliar, woodInput, foliarInput);
 
                 SiteVars.soilClass[site].DisturbanceImpactsBiomass(site, cohort.Species, cohort.Data.Age, woodInput, foliarInput, disturbanceType.Name, 0);
+                SiteVars.soilClass[site].RecordDisturbance(disturbanceType.Name);
 
                 //if (disturbanceType.IsMemberOf("disturbance:harvest"))
                 //{
@@ -277,6 +281,18 @@ namespace Landis.Extension.Succession.ForC
         //---------------------------------------------------------------------
 
         /// <summary>
+        /// A disturbance (in v8, a harvest that removes whole cohorts) has selected a site. It is raised before any
+        /// cohort is cut, and also when none is, so the site's DOM transfers are done even when nothing dies.
+        /// </summary>
+        public void SiteDisturbed(object sender, DisturbanceEventArgs eventArgs)
+        {
+            if (eventArgs.DisturbanceType != null)
+                SiteVars.soilClass[eventArgs.Site].RecordDisturbance(eventArgs.DisturbanceType.Name);
+        }
+
+        //---------------------------------------------------------------------
+
+        /// <summary>
         /// Add a new cohort to a site. Cohort will not be officially added to site until after growth phase
         /// This is a Delegate method to base succession.
         /// </summary>
@@ -313,7 +329,11 @@ namespace Landis.Extension.Succession.ForC
             IEcoregion ecoregion = PlugIn.ModelCore.Ecoregion[site];
             double preGrowthBiomass = 0;
             SiteVars.ResetAnnualValues(site);
- 
+
+            //the DOM transfers of this timestep's disturbances, before growth adds litter (not in the spin-up at time 0)
+            if (PlugIn.ModelCore.CurrentTime > 0)
+                SiteVars.soilClass[site].DisturbanceImpactsDOMRecorded(site, years);
+
             for (int y = 0; y < years; y++)
             {
                 /*  CODE RELATED TO THE USE OF ONE OF THE BIGGER LANDIS CLIMATE LIBRARIES

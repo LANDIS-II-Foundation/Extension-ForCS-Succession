@@ -1,0 +1,3 @@
+# Harvest selects the cells but its prescription matches no cohort; the harvest DOM rows still act (#9).
+FluxBio_records 1 == 0
+FluxDOM_records 1 > 0
