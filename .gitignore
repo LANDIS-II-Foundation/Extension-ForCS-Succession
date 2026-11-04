@@ -253,3 +253,6 @@ src/lib/Landis.Library.Parameters-v2.dll
 /src/lib
 src/lib/Landis.Library.Metadata-v2.dll
 /src/obj
+
+# test-case runs (testing/README.md)
+testing/work/
