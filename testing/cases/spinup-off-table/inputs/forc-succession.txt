@@ -1,0 +1,82 @@
+LandisData  "ForC Succession"
+
+Timestep  1
+
+SeedingAlgorithm  NoDispersal
+
+ForCSClimateFile  climate.txt
+
+InitialCommunities  initial-communities.csv
+InitialCommunitiesMap  initial-communities.asc
+
+DisturbanceMatrixFile  ForCS_DM.txt
+
+ForCSOutput
+>> Biomass  DOM_pools  Fluxes  Summary
+   1        1          1       1
+
+ForCSMapControl
+>> BiomassC  SDOMC  NBP  NEP  NPP  RH  ToFPS
+   0         0      0    0    0    0   0
+
+MapOutputInterval  0
+
+SpinUp
+>> On/Off  BiomassSpinUp  Tolerance%  MaxIterations
+   0       1              1           20
+
+SpinUpReturnIntervals
+>> Ecoregion  ReturnInterval  CycleDisturbance  LastDisturbance
+   eco1       250             fire 4            harvest
+
+AvailableLightBiomass
+>> Shade class, then % max biomass by ecoregion
+     eco1
+1    15%
+2    35%
+3    55%
+4    80%
+5    100%
+
+LightEstablishmentTable
+>> Spp shade class, then probability by actual shade 0..5
+1  1.00  0.50  0.20  0.00  0.00  0.00
+2  0.50  1.00  1.00  1.00  0.50  0.00
+3  0.20  0.20  1.00  1.00  1.00  0.50
+4  0.00  0.00  0.20  1.00  1.00  0.50
+5  0.00  0.10  0.20  0.20  0.50  0.50
+
+SpeciesParameters
+>> Sp  LeafLong  MortShape  MerchMinAge  MerchA  MerchB  PropNonMerchToFastAG  GrowthShape  ShadeTol  FireTol
+Hw  3  19  45  0.8390  0.9870  0.25  0.56  4  1
+Bl  3  10  40  0.7828  0.9805  0.25  0.75  3  1
+
+DOMPools
+>> ID  Name  ProportionToAtmosphere
+ 1  "Very Fast Aboveground"  0.815
+ 2  "Very Fast Belowground"  0.830
+ 3  "Fast Aboveground"  0.830
+ 4  "Fast Belowground"  0.830
+ 5  "Medium"  0.830
+ 6  "Slow Aboveground"  0.830
+ 7  "Slow Belowground"  0.830
+ 8  "Stem Snag"  0.830
+ 9  "Other Snag"  0.830
+10  "Extra pool"  0.830
+
+EcoSppDOMParameters  ForCS_EcoSppDOMParameters.csv
+
+ForCSProportions
+>> BiomassFine  BiomassCoarse  SlowAGtoSlowBG  StemSnagToMedium  BranchSnagToFastAG
+   0.5          0.5            6e-04           0.032             0.1
+
+ANPPTimeSeries  ForCS_ANPPTimeSeries.csv
+
+MaxBiomassTimeSeries  ForCS_MaxBiomassTimeSeries.csv
+
+EstablishProbabilities  ForCS_EstablishProbabilities.csv
+
+RootDynamics
+>> Eco  Sp  MinABio  RootAbio  PropFineRt  FRturnover  CRturnover
+eco1  Hw  0  0.292  0.07  0.29  0.012
+eco1  Bl  0  0.292  0.07  0.29  0.012

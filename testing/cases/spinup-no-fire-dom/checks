@@ -1,0 +1,3 @@
+# As dom-a-spinup, with no fire DOM rows. The severity-4 fire that ends each spin-up cycle
+# applies those rows, so the two must differ (#9).
+TotalDOM 1 != case:dom-a-spinup

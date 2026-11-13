@@ -1,0 +1,6 @@
+# The matrix gives dom-d-wind's wind rows as other rows; wind falls back to them.
+NBP 1 == case:dom-d-wind
+TotalDOM 1 == case:dom-d-wind
+FluxBio_records 1 == case:dom-d-wind
+FluxDOM_records 1 == case:dom-d-wind
+FluxDOM_records 1 > 0

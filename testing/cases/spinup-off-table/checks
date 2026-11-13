@@ -1,0 +1,4 @@
+# As spinup-off, with a SpinUpReturnIntervals table, which is ignored when the soil spin-up is off.
+TotalDOM 1 == case:spinup-off
+Rh 1 == case:spinup-off
+NBP 1 == case:spinup-off

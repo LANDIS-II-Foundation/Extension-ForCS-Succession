@@ -64,6 +64,21 @@ namespace Landis.Extension.Succession.ForC
                     MaxLife = species.Longevity;
             }
 
+            if (parameters.SoilSpinUpFlag == 1)
+            {
+                foreach (KeyValuePair<IEcoregion, SpinUpReturnInterval> kvp in parameters.SpinUpReturnIntervals)
+                {
+                    //the spin-up records litter inputs by cohort age, up to the longest species longevity
+                    if (kvp.Value.ReturnInterval >= MaxLife)
+                        throw new ApplicationException(string.Format("SpinUpReturnIntervals: the return interval of {0} ({1}) must be shorter than the longest species longevity ({2}).",
+                            kvp.Key.Name, kvp.Value.ReturnInterval, MaxLife));
+                    modelCore.UI.WriteLine("   Spin-up of {0}: cycles of {1} years ending with {2}; the last ends with {3}.",
+                        kvp.Key.Name, kvp.Value.ReturnInterval, kvp.Value.CycleDisturbance, kvp.Value.LastDisturbance);
+                }
+            }
+            else if (parameters.SpinUpReturnIntervals.Count > 0 || parameters.SpinUpLastDisturbanceMap != null)
+                modelCore.UI.WriteLine("   The soil spin-up is off, so SpinUpReturnIntervals and SpinUpLastDisturbanceMap are not used.");
+
             SiteVars.Initialize(parameters, paramDM);
         }
 
@@ -113,8 +128,11 @@ namespace Landis.Extension.Succession.ForC
             base.Initialize(modelCore, parameters.SeedAlgorithm); 
 
             InitialBiomass.Initialize(Timestep);
+            if (parameters.SoilSpinUpFlag == 1 && parameters.SpinUpLastDisturbanceMap != null)
+                ReadSpinUpLastDisturbanceMap(parameters.SpinUpLastDisturbanceMap);
 
             Cohort.MortalityEvent += CohortMortality;
+            SiteCohorts.DisturbanceEvent += SiteDisturbed;
             //Landis.Library.UniversalCohorts.Cohort.DeathEvent += CohortTotalMortality;
 
             InitializeSites(parameters.InitialCommunities, parameters.InitialCommunitiesMap, modelCore);
@@ -128,6 +146,7 @@ namespace Landis.Extension.Succession.ForC
                 SiteVars.CapacityReduction = PlugIn.ModelCore.GetSiteVar<double>("Harvest.CapacityReduction");
 
             SiteVars.FireSeverity = PlugIn.ModelCore.GetSiteVar<byte>("Fire.Severity");
+            SiteVars.TimeOfLastFire = PlugIn.ModelCore.GetSiteVar<int>("Fire.TimeOfLastEvent");
 
             //EcoregionData.GenerateNewClimate(PlugIn.ModelCore.CurrentTime, Timestep); //LANDIS CLIMATE LIBRARY
             EcoregionData.GetAnnualTemperature(Timestep, 0);                            //ForCS CLIMATE
@@ -212,6 +231,7 @@ namespace Landis.Extension.Succession.ForC
                     }
 
                     SiteVars.soilClass[site].DisturbanceImpactsBiomass(site, cohort.Species, cohort.Data.Age, wood, foliar, disturbanceType.Name, 0);
+                    SiteVars.soilClass[site].RecordDisturbance(disturbanceType.Name);
                 }
             }
             else
@@ -225,6 +245,7 @@ namespace Landis.Extension.Succession.ForC
                 //PlugIn.ModelCore.UI.WriteLine("Inputs:  {0}, {1}, {2}, {3}", fractionPartialMortality, foliar, woodInput, foliarInput);
 
                 SiteVars.soilClass[site].DisturbanceImpactsBiomass(site, cohort.Species, cohort.Data.Age, woodInput, foliarInput, disturbanceType.Name, 0);
+                SiteVars.soilClass[site].RecordDisturbance(disturbanceType.Name);
 
                 //if (disturbanceType.IsMemberOf("disturbance:harvest"))
                 //{
@@ -277,6 +298,18 @@ namespace Landis.Extension.Succession.ForC
         //---------------------------------------------------------------------
 
         /// <summary>
+        /// A disturbance (in v8, a harvest that removes whole cohorts) has selected a site. It is raised before any
+        /// cohort is cut, and also when none is, so the site's DOM transfers are done even when nothing dies.
+        /// </summary>
+        public void SiteDisturbed(object sender, DisturbanceEventArgs eventArgs)
+        {
+            if (eventArgs.DisturbanceType != null)
+                SiteVars.soilClass[eventArgs.Site].RecordDisturbance(eventArgs.DisturbanceType.Name);
+        }
+
+        //---------------------------------------------------------------------
+
+        /// <summary>
         /// Add a new cohort to a site. Cohort will not be officially added to site until after growth phase
         /// This is a Delegate method to base succession.
         /// </summary>
@@ -313,7 +346,11 @@ namespace Landis.Extension.Succession.ForC
             IEcoregion ecoregion = PlugIn.ModelCore.Ecoregion[site];
             double preGrowthBiomass = 0;
             SiteVars.ResetAnnualValues(site);
- 
+
+            //the DOM transfers of this timestep's disturbances, before growth adds litter (not in the spin-up at time 0)
+            if (PlugIn.ModelCore.CurrentTime > 0)
+                SiteVars.soilClass[site].DisturbanceImpactsDOMRecorded(site, years);
+
             for (int y = 0; y < years; y++)
             {
                 /*  CODE RELATED TO THE USE OF ONE OF THE BIGGER LANDIS CLIMATE LIBRARIES
@@ -496,6 +533,28 @@ namespace Landis.Extension.Succession.ForC
                     }
 
                     InitializeSite(activeSite);
+                }
+            }
+        }
+
+        //---------------------------------------------------------------------
+
+        /// <summary>
+        /// Reads the codes of SpinUpLastDisturbanceMap into SiteVars.SpinUpLastDisturbanceCode.
+        /// </summary>
+        private void ReadSpinUpLastDisturbanceMap(string path)
+        {
+            ModelCore.UI.WriteLine("   Reading the spin-up's last-disturbance map \"{0}\" ...", path);
+            SiteVars.SpinUpLastDisturbanceCode = ModelCore.Landscape.NewSiteVar<int>();
+            IInputRaster<UIntPixel> map = ModelCore.OpenRaster<UIntPixel>(path);
+            using (map)
+            {
+                UIntPixel pixel = map.BufferPixel;
+                foreach (Site site in ModelCore.Landscape.AllSites)
+                {
+                    map.ReadBufferPixel();
+                    if (site.IsActive)
+                        SiteVars.SpinUpLastDisturbanceCode[site] = (int)pixel.MapCode.Value;
                 }
             }
         }

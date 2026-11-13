@@ -1,0 +1,2 @@
+# The harvest DOM rows act on a partial cut, where the cohort survives (#9).
+FluxDOM_records 1 > 0

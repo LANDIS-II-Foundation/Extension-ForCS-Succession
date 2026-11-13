@@ -1,0 +1,21 @@
+LandisData  "ForC Succession"
+
+DisturbFireTransferDOM
+>> Intensity  FromDOM  ToAir  ToDOM  ToFPS
+
+DisturbOtherTransferDOM
+>> Type  FromDOM  ToAir  ToDOM  ToFPS
+harvest  1  0  0.3  0.0
+harvest  8  0  0.4  0.6
+harvest  9  0  1.0  0.0
+
+DisturbFireTransferBiomass
+>> Intensity  FromBiomass  ToAir  ToFPS  ToDOM
+
+DisturbOtherTransferBiomass
+>> Type  FromBiomass  ToAir  ToFPS  ToDOM
+harvest  1  0.0  0.8  0.2
+harvest  2  0.0  0.0  1.0
+harvest  3  0.0  0.0  1.0
+harvest  5  0.0  0.0  1.0
+harvest  6  0.0  0.0  1.0

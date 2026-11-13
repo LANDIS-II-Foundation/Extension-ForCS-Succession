@@ -1,0 +1,5 @@
+LandisData  "ForC Succession"
+
+ClimateTable
+>> Time  Ecoregion  AvgT
+0  eco1  -1.66637754440308

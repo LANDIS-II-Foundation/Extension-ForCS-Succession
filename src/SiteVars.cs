@@ -36,6 +36,8 @@ namespace Landis.Extension.Succession.ForC
         public static ISiteVar<double> AbovegroundNPPcarbon;
 
         public static ISiteVar<byte> fireSeverity;
+        public static ISiteVar<int> TimeOfLastFire;     //registered by the fire extensions as Fire.TimeOfLastEvent
+        public static ISiteVar<int> SpinUpLastDisturbanceCode;      //from SpinUpLastDisturbanceMap; null without one
         public static ISiteVar<string> HarvestPrescriptionName;
 
         public static ISiteVar<SoilClass> soilClass;    

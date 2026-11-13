@@ -27,6 +27,8 @@ namespace Landis.Extension.Succession.ForC
             public const string ForCSOutput = "ForCSOutput";
             public const string ForCSMapControl = "ForCSMapControl";
             public const string SpinUp = "SpinUp";
+            public const string SpinUpReturnIntervals = "SpinUpReturnIntervals";
+            public const string SpinUpLastDisturbanceMap = "SpinUpLastDisturbanceMap";
             public const string AvailableLightBiomass = "AvailableLightBiomass";
             public const string LightEstablishmentTable = "LightEstablishmentTable";
             public const string SpeciesParameters = "SpeciesParameters";
@@ -267,6 +269,58 @@ namespace Landis.Extension.Succession.ForC
             ReadValue(nIterations, currentLine);
             parameters.SetIterations(nIterations.Value);
             GetNextLine();
+
+            //--------------------------
+            //  SpinUpReturnIntervals table (optional): the spin-up of an ecoregion listed here cycles a stand of the
+            //  return interval's age instead of the present stand's age. Ecoregions not listed spin up as before.
+            if (ReadOptionalName(Names.SpinUpReturnIntervals))
+            {
+                InputVar<string> sSpinUpEcoregion = new InputVar<string>("Ecoregion");
+                InputVar<int> nReturnInterval = new InputVar<int>("ReturnInterval");
+                while (!AtEndOfInput && CurrentName != Names.SpinUpLastDisturbanceMap && CurrentName != Names.AvailableLightBiomass)
+                {
+                    currentLine = new StringReader(CurrentLine);
+                    ReadValue(sSpinUpEcoregion, currentLine);
+                    IEcoregion ecoregion = GetEcoregion(sSpinUpEcoregion.Value);
+                    if (parameters.SpinUpReturnIntervals.ContainsKey(ecoregion))
+                        throw new InputValueException(sSpinUpEcoregion.Value.String, "{0}: the ecoregion {1} is listed twice.", Names.SpinUpReturnIntervals, ecoregion.Name);
+
+                    ReadValue(nReturnInterval, currentLine);
+                    if (nReturnInterval.Value.Actual < 1)
+                        throw new InputValueException(nReturnInterval.Value.String, "{0}: the return interval must be at least 1 year.", Names.SpinUpReturnIntervals);
+
+                    SpinUpDisturbance cycleDisturbance = ReadSpinUpDisturbance(currentLine, "CycleDisturbance");
+                    SpinUpDisturbance lastDisturbance = ReadSpinUpDisturbance(currentLine, "LastDisturbance");
+                    parameters.SpinUpReturnIntervals[ecoregion] = new SpinUpReturnInterval(nReturnInterval.Value.Actual, cycleDisturbance, lastDisturbance);
+
+                    CheckNoDataAfter("the LastDisturbance column", currentLine);
+                    GetNextLine();
+                }
+            }
+
+            //  SpinUpLastDisturbanceMap (optional): a map of codes, and a table of what each code means, that override
+            //  the ecoregion's LastDisturbance site by site. Code 0, or a code not in the table, keeps the ecoregion's.
+            InputVar<string> sLastDisturbanceMap = new InputVar<string>(Names.SpinUpLastDisturbanceMap);
+            if (ReadOptionalVar(sLastDisturbanceMap))
+            {
+                parameters.SpinUpLastDisturbanceMap = sLastDisturbanceMap.Value;
+                InputVar<int> nCode = new InputVar<int>("Code");
+                while (!AtEndOfInput && CurrentName != Names.AvailableLightBiomass)
+                {
+                    currentLine = new StringReader(CurrentLine);
+                    ReadValue(nCode, currentLine);
+                    if (nCode.Value.Actual < 1)
+                        throw new InputValueException(nCode.Value.String, "{0}: codes must be at least 1.", Names.SpinUpLastDisturbanceMap);
+                    if (parameters.SpinUpLastDisturbanceCodes.ContainsKey(nCode.Value.Actual))
+                        throw new InputValueException(nCode.Value.String, "{0}: the code {1} is listed twice.", Names.SpinUpLastDisturbanceMap, nCode.Value.Actual);
+                    parameters.SpinUpLastDisturbanceCodes[nCode.Value.Actual] = ReadSpinUpDisturbance(currentLine, "LastDisturbance");
+
+                    CheckNoDataAfter("the LastDisturbance column", currentLine);
+                    GetNextLine();
+                }
+                if (parameters.SpinUpReturnIntervals.Count == 0)
+                    PlugIn.ModelCore.UI.WriteLine("   {0} has no effect without a {1} table.", Names.SpinUpLastDisturbanceMap, Names.SpinUpReturnIntervals);
+            }
 
             //--------------------------
             //  MinRelativeBiomass table
@@ -893,6 +947,25 @@ namespace Landis.Extension.Succession.ForC
                 lineNumbers[ecoregion.Name] = LineNumber;
 
             return ecoregion;
+        }
+        //---------------------------------------------------------------------
+
+        /// <summary>
+        /// Reads a disturbance in the spin-up tables: "fire" followed by a severity (1 to 5), or the name of any other
+        /// disturbance type in the disturbance matrix (e.g. harvest, wind, a harvest prescription).
+        /// </summary>
+        private SpinUpDisturbance ReadSpinUpDisturbance(StringReader currentLine, string column)
+        {
+            InputVar<string> sName = new InputVar<string>(column);
+            ReadValue(sName, currentLine);
+            if (!sName.Value.Actual.Equals(DisturbTransferFromPool.mk_sDisturbTypeFire, System.StringComparison.OrdinalIgnoreCase))
+                return new SpinUpDisturbance(sName.Value.Actual, 0);
+
+            InputVar<int> nSeverity = new InputVar<int>(column + " fire severity");
+            ReadValue(nSeverity, currentLine);
+            if (nSeverity.Value.Actual < 1 || nSeverity.Value.Actual > FireEffects.mk_nIntensityCount)
+                throw new InputValueException(nSeverity.Value.String, "{0}: a fire's severity must be from 1 to {1}.", column, FireEffects.mk_nIntensityCount);
+            return new SpinUpDisturbance("fire", nSeverity.Value.Actual);
         }
         //---------------------------------------------------------------------
 

@@ -1,0 +1,20 @@
+LandisData  "Biomass Harvest"
+
+Timestep  1
+
+ManagementAreas  mgmt-areas.asc
+Stands  stands.asc
+
+Prescription  CC
+    StandRanking  Random
+    SiteSelection  Complete
+    CohortsRemoved  ClearCut
+
+HarvestImplementations
+>>  MgmtArea  Prescription  HarvestArea  BeginTime  EndTime
+    1         CC            50%          1          1
+
+PrescriptionMaps  harvest/prescripts-{timestep}.tif
+BiomassMaps  harvest/biomass-removed-{timestep}.tif
+EventLog  harvest/log.csv
+SummaryLog  harvest/summary-log.csv

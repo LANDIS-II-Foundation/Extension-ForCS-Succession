@@ -1,0 +1,5 @@
+# As spinup-ri-young, whose table ends the predecessor with a harvest, with a map that gives this
+# cell a fire instead; it must equal spinup-ri-young-fire (#15).
+TotalDOM 1 == case:spinup-ri-young-fire
+Rh 1 == case:spinup-ri-young-fire
+NBP 1 == case:spinup-ri-young-fire
