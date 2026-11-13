@@ -68,6 +68,7 @@ The column is one of `totals.csv`'s, and `<op>` is one of `== != > >= < <=`. A v
 | `spinup-off-table` | as `spinup-off`, with a `SpinUpReturnIntervals` table, which must be ignored |
 | `spinup-ri-young` | as `spinup-young`, with a 250-year return interval and a harvest ending the predecessor (#15) |
 | `spinup-ri-young-fire` | as `spinup-ri-young`, with a severity-4 fire ending the predecessor (#15) |
+| `spinup-ri-mortality-fraction` | as `spinup-ri-young`, with a 450-year return interval (longer than Bl's longevity) and `SpinupMortalityFraction` 0.02; age mortality plus the fraction is capped at the cohort's biomass |
 | `spinup-ri-map` | as `spinup-ri-young`, with a `SpinUpLastDisturbanceMap` giving the cell a fire; must equal `spinup-ri-young-fire` (#15) |
 | `spinup-young` | one cell, a 25-year-old Hw cohort, with Bl listed but absent (#14) |
 | `spinup-young-bl-zero` | as `spinup-young`, with Bl's `AmountT0` at 0; must be identical to `spinup-young` (#14) |

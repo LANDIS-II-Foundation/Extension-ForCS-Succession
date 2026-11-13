@@ -1,0 +1,4 @@
+# A 450-year return interval outlives Bl (longevity 400), and the spin-up mortality fraction is
+# added to its age mortality; the sum must be capped at the cohort's biomass, not exceed it.
+# The run completing is the test; DOM is the only thing to pin.
+TotalDOM 1 > 0

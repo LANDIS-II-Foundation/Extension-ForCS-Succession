@@ -195,7 +195,6 @@ namespace Landis.Extension.Succession.ForC
 
             double M_AGE = cohort.Data.Biomass * Math.Exp((double)cohort.Data.Age / max_age * d) / Math.Exp(d);
 
-            M_AGE = Math.Min(M_AGE, cohort.Data.Biomass);
            // if (cohort.Species.Name == "pinubank")
            //{
            //     PlugIn.ModelCore.UI.WriteLine("Name={0}, Age={1}, B={2}, Mage={3:0.0}, max_age={4:0.0}, d={5:0.0}", cohort.Species.Name, cohort.Age, cohort.Biomass, M_AGE, max_age, d);
@@ -207,6 +206,8 @@ namespace Landis.Extension.Succession.ForC
                 if (PlugIn.CalibrateMode)
                     PlugIn.ModelCore.UI.WriteLine("Yr={0}. SpinupMortalityFraction={1:0.0000}, AdditionalMortality={2:0.0}, Spp={3}, Age={4}.", (PlugIn.ModelCore.CurrentTime + SubYear), SpinupMortalityFraction, (cohort.Data.Biomass * SpinupMortalityFraction), cohort.Species.Name, cohort.Data.Age);
             }
+
+            M_AGE = Math.Min(M_AGE, cohort.Data.Biomass);
 
             return M_AGE;
         }
